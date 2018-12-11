@@ -1,0 +1,175 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>login</title>
+    <meta name="viewport" charset="UTF-8" content="user-scalable=no"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta property="qc:admins" content="1403267155765154541656375"/>
+    <meta property="wb:webmaster" content="fdcd9430a88b1552"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+
+    <!-- 站点css -->
+
+</head>
+.
+<body>
+
+<style>
+    .content {
+        background: #fff;
+    }
+
+    .loginright .item dl {
+        margin-left: 63px;
+    }
+
+    .loginright .item dd {
+        float: left;
+    }
+
+    .icon-weixin:before {
+        content: "";
+    }
+
+    .wrap {
+        margin-top: 0;
+    }
+
+    .face_a {
+        margin-left: 13px;
+        width: 30px;
+        height: 30px;
+        float: left;
+    }
+
+    #login {
+        display: block;
+        height: 40px;
+        background-color: #00BED4;
+        color: #fff;
+        text-align: center;
+        line-height: 40px;
+    }
+
+    .container {
+        width: 300px;
+        /*margin: 100px auto;*/
+        display: none;
+    }
+
+    input {
+        display: block;
+        width: 290px;
+        line-height: 40px;
+        margin: 10px 0;
+        padding: 0 10px;
+        outline: none;
+        border: 1px solid #c8cccf;
+        border-radius: 4px;
+        color: #6a6f77;
+    }
+
+    #msg {
+        width: 100%;
+        line-height: 40px;
+        font-size: 14px;
+        text-align: center;
+    }
+
+    a:link, a:visited, a:hover, a:active {
+        margin-left: 100px;
+        color: #0366D6;
+    }
+
+    .post-service {
+        position: fixed;
+        bottom: 0;
+    }
+
+
+</style>
+<meta http-equiv="X-UA-Compatible" content="IE=7, IE=9">
+<div class="header">
+    <div class="loginhead">
+        <div class="wrap">
+            <div class="fr" style="margin-top: 10px;font-size: 14px;color:#fff;">没有账号？<a href="register.html" style="color: #fff;margin-left: 15px;padding-left: 15px;border-left: solid 1px #a0a0a0;">注册</a>
+            </div>
+            <div class="logo"><a href="./html/group/group.html" ><img style="margin: 4px 0px;" src="./images/logo.png" width="150"/></a></div>
+        </div>
+    </div>
+</div>
+<!--header end-->
+
+<div class="content" id="content">
+    <div class="wrap">
+        <div class="logincontent">
+            <div class="loginleft">
+                <div id="ad_2" class="flashNews" style="width:560px;">
+                    <div>
+                        <p><a target="_blank" href=""><img width="560" src="./images/login.png"/></a></p>
+                    </div>
+                </div>
+            </div>
+            <div class="loginright">
+                <h3>欢迎登录</h3>
+                <validator name="myForm">
+                    <form id="ajax_login_form" method="POST">
+                        <div class="item">
+                            <input id="account_input" name="login_email" type="text" v-model="mobile" class="inp"
+                                   autocomplete="off" @blur="changeMobile" placeholder="请输入手机"/>
+                            <span class="maraccount" v-if="account != ''">{{account}}</span>
+                            <span class="maraccount" v-if="datamobile">{{datamobile}}</span>
+                        </div>
+                        <div class="item">
+                            <input id="pwd_input" name="login_password" v-model="password" detect-change="off"
+                                   detect-blur='on' initial='off' v-validate:password="{minlength:6,maxlength:20}"
+                                   type="password" class="inp" autocomplete="off" placeholder="请输入登录密码"/>
+                            <span class="marpwd" v-if="$myForm.password.minlength">请输入6-20位的密码</span>
+                            <span class="marpwd" v-if="$myForm.password.maxlength">请输入6-20位的密码</span>
+                            <span class="marpwd" v-if="datapsw">{{datapsw}}</span>
+                        </div>
+                        <style>
+                            .marpwd, .maraccount {
+                                color: red;
+                            }
+                        </style>
+
+                        <div class="item" id="login" @click="login">登录</div>
+                        <div class="item tr"><a
+                                href="./register.html">注册新账号</a>
+                        </div>
+                    </form>
+                </validator>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--itembox end-->
+
+<!--footer start-->
+<div class="post-service yensen">
+
+    <div class="copyright-box">
+        Copyright 2017 seition All Rights Reserved | 蜀ICP 备 16004612号
+    </div>
+</div>
+<!--footer end-->
+
+<div id="site_analytics_code" style="display:none;">
+</div>
+<i id="webname" title="login"></i>
+<script src="./js/vue.min.js"></script>
+<script src="./js/vuex.js"></script>
+<script src="./js/vue-cookies.js"></script>
+<script src="./js/common.js"></script>
+<script src="./js/axios.js"></script>
+<script src="js/dynamic2.js"></script>
+<script src="./js/login.js"></script>
+
+</body>
+</html>
+

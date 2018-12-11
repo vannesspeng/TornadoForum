@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<!-- saved from url=(0046)http://localhost:63342/untitled1/product0606/content/personalCenter/set/set.html?_ijt=pe4g09rpu0ca0vo65v123a68eg -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <title>Eduline — Eduline在线教育平台|在线网校系统|在线教育系统|在线教育解决方案|在线教育系统|在线学习系统|在线培训系统</title>
+    <meta content="在线教育，教育系统，在线教育系统，在线教育平台，在线教育网站，在线教育解决方案，网络教学系统，直播系统，点播系统，录播系统，在线约课，在线考试，在线题库，题库系统，在线教育app，在线网校系统，网校系统，培训系统，企业培训系统，企业内训系统，在线培训系统，在线教育系统，在线学习系统，慕课系统，教育系统源码，教育源码，教育源码" name="keywords">
+    <meta content="Eduline多机构在线教育交易平台" name="description">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+  <style>
+		@font-face {font-family: 'iconfontNEW';src: url('../question/questionsList.html?_ijt=q3nqce0pepbjuv1rh2c72ebheaaddons/theme/stv1/_static/icon/iconfontNEW.woff?v={$site.sys_version}');}
+		.iconfontNEW{font-family:"iconfontNEW";}
+	</style>
+    <script src="../../../../软件/下载/react/参考代码/fang/src/test/router/02ReactRouter/App.js"></script>
+
+
+</head>
+<body>
+
+<div id="content">
+
+    <div class="top">
+        <div class="header_new2">
+            <div class="top1">
+                <div class="top1img">
+                    <a href="../group/group.html" title="Eduline在线教育系统" style="display: block;float: left;"><img src="../../images/logo.png" width="150" data-bd-imgshare-binded="1"></a>
+                </div>
+
+                <div class="nav">
+                    <ul>
+                        <li >
+                            <a href="../group/group.html" target="_self">社区</a>
+                        </li>                                              <li >
+                        <a href="../question/questionsList.html" target="_self">问答</a>
+                    </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="top3">
+                <!--消息提示-->
+                <div class="nav1">
+                    <ul class="page_header_adiv">
+                        <li class="header_top_nav" v-if="notLogin === true">
+                            <a href="../personalCenter/myAttentions.html">{{user}}</a>
+                            <i class="icon-nav-arrow"></i>
+                        </li>
+                        <li class="fr" v-if="notLogin ===false" style="margin-top: 10px;font-size: 14px;color:#fff;"><a href="../../login.html">登录 </a> | <a href="../../register.html" style="cursor: pointer;"> 注册</a>
+                        </li>
+                        <dl class="login-after-position" v-show="notLogin === true">
+                            <dd class="login-after-bdbt"><a href="../personalCenter/myAttentions.html">个人中心</a>
+                            </dd>
+                            <dd class="login-after-bdbt"><a
+                                    href="../personalCenter/changeMyInfo.html">我的设置</a>
+                            </dd>
+                            <dd class="login-after-bdbt"><a
+                                    href="../personalCenter/myMsg.html">我的消息</a>
+                            </dd>
+                            <dd class="login-after-bdbt"><a href="javascript:;" onclick="logout()">退出</a></dd>
+                        </dl>
+
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+    <!---选择地址弹出框-->
+
+    <style>
+        .center_right_tit div .on{color:#00BED4}
+        .box-ver{float:right;margin-right:70px}
+        .user-con-title a{float:left;width:auto}
+        .center_left{float:left;overflow:hidden;border-radius:4px}
+        .center_right{float:right}
+        .txt_bar_a{padding:0 20px 0 0}
+        .new_style{width:392px}
+    </style>
+    <div class="content">
+        <div class="wrap">
+            <style>
+        .center_left dl{
+            padding-bottom: 0px;
+        }
+    </style>
+    <div class="center_left">
+        <dl style="border-bottom: solid 1px #e7e6e5;">
+            <dt><a href="javascript:;" onclick="magbtn(this)">我的设置</a></dt>
+            <dd>
+                <ul>
+                    <li class="on"><a href="#">账户设置</a></li>
+                    </ul>
+            </dd>
+        </dl>
+    </div>
+
+
+
+            <ul class=" center_right">
+                <div class="center_right_tit">
+                    <div class="user-con-title">
+                        <a :class="{on: showInfo}" @click="showinfo">基本信息</a>
+                        <a :class="{on: showImg}" @click="showimg">头像设置</a>
+                        <a :class="{on: showPsd}" @click="showpsd">修改密码</a>
+                    </div>
+                </div>
+              <style>
+                  .missContent{
+                      display: none;
+                  }
+              </style>
+            </ul>
+            <ul class="myContent">
+                <li class="center_right " v-if="showInfo" >
+                    <div class="center_right_con Manage_all" id="basic_sets" style="display:block">
+                        <form class="infobox">
+                            <dl>
+                                <dt><span>*</span>登录账号：</dt>
+                                <dd>18227618966                            </dd>
+                            </dl>
+                            <dl>
+                                <dt><span>*</span>性别：</dt>
+                                <dd>
+                                    <label><input type="radio" name="sex" value="1" v-model="userInfo.gender">男</label>
+                                    <label><input type="radio" name="sex" value="2"v-model="userInfo.gender">女</label>
+                                </dd>
+                            </dl>
+                            <dl>
+                                <dt><span>*</span>昵称：</dt>
+                                <dd>
+                                    <input name="uname" class="inp01" type="text" placeholder="请输入昵称" v-model="userInfo.nick_name">
+                                </dd>
+                                </dl>
+                            <dl>
+                                <dt><span>*</span>地区：</dt>
+                                <dd style="width: 480px;">
+                                    <style>
+                                        select{margin-right: 19px !important;height: 38px;width: 121px;border-radius: 4px;border: solid 1px #b6c7d6;line-height: 34px;padding: 4px;}
+                                    </style>
+                                    <select  name="mzLevelSelect2" class="mzTopLevel mzLevel" v-model="userInfo.address">
+                                            <option value="null">请选择</option>
+                                            <option value="北京市">北京市</option>
+                                            <option value="天津市">天津市</option>
+                                            <option value="河北省">河北省</option>
+                                            <option value="山西省">山西省</option>
+                                            <option value="内蒙古">内蒙古</option>
+                                            <option value="辽宁省">辽宁省</option>
+                                            <option value="吉林省">吉林省</option>
+                                            <option value="黑龙江">黑龙江</option>
+                                            <option value="上海市">上海市</option>
+                                            <option value="江苏省">江苏省</option>
+                                            <option value="浙江省">浙江省</option>
+                                            <option value="安徽省">安徽省</option>
+                                            <option value="福建省">福建省</option>
+                                            <option value="江西省">江西省</option>
+                                            <option value="山东省">山东省</option>
+                                            <option value="河南省">河南省</option>
+                                            <option value="湖北省">湖北省</option>
+                                            <option value="湖南省">湖南省</option>
+                                            <option value="广东省">广东省</option>
+                                            <option value="广西省">广西省</option>
+                                            <option value="海南省">海南省</option>
+                                            <option value="重庆市">重庆市</option>
+                                            <option value="四川省">四川省</option>
+                                            <option value="贵州省">贵州省</option>
+                                            <option value="云南省">云南省</option>
+                                            <option value="西　藏">西　藏</option>
+                                            <option value="陕西省">陕西省</option>
+                                            <option value="甘肃省">甘肃省</option>
+                                            <option value="青海省">青海省</option>
+                                            <option value="宁　夏">宁　夏</option>
+                                            <option value="新　疆">新　疆</option>
+                                            <option value="台湾省">台湾省</option>
+                                            <option value="香　港">香　港</option>
+                                            <option value="澳　门">澳　门</option>
+                                        </select>
+                                    <input id="city_ids_hidden" name="city_ids_hidden" type="hidden" value="0">
+                                    <style>
+                                        .mzLevel{padding:4px;margin-right:5px;}
+                                    </style>
+                                </dd>
+                                </dl>
+                                <dl>
+                                    <dt>个人简介：</dt>
+                                    <dd>
+                                        <textarea class="tex01 textlength" maxlength="200" name="intro" v-model="userInfo.desc"></textarea>
+                                    </dd>
+                                    <div class="form-hint"><strong id="strconunt"></strong></div>
+                                </dl>
+                                <dl>
+                                    <dd><a href="javascript:;" class="btn" type="submit" @click="changeInfo" style="height: 40px;line-height: 40px;">保 存</a>
+                                    </dd>
+                                </dl>
+                            </form>
+                        </div>
+                </li>
+                <li class="center_right " v-if="showImg">
+                    <!--头像设置-->
+                    <div class="center_right_con Manage_all">
+                        <div style="width: 540px;margin: 20px auto;">
+                            <div id="selectUploadType" class="chanage lh30 " style=" line-height:24px; font-size:12px; padding:10px 0; color:#999999;">
+                                建议选择清晰、尺寸为300px*300px照片作为头像<br>
+                                支持JPG,JPGE,PNG格式，大小限制1024M以内
+                            </div>
+
+                            <form id="noflashUpload" model-node="avatar_upload_form" enctype="multipart/form-data" action="javascript:;" method="post">
+                                <dl class="form-avatar">
+                                    <dd class="ft16 lh30 pb40">
+                                        <input event-node="select_file" type="file" v-model="front_img" @change="changeImage($event)" name="Filedata" class="">
+                                        <span event-node="loading" style="display:none;"><img src="">加载中...</span>
+                                    </dd>
+                                    <dd>
+                                        <ul class="ph_img_box clearfix">
+                                            <li class="ph_img m_70_40_0_40 fl"><img class="toux_img2 toux_img_reset" :src="image"><p>(80px*80px)</p></li>
+                                        </ul>
+                                        <div class="mod-avatar" style="display:none">
+                                            <div class="cut-1"><img  src="" width="150"><p>(150px*150px)</p></div>
+                                        </div>
+                                    </dd>
+                                </dl>
+                                <button class="Save sel_w btn_big_r" @click="postImg">保存</button>
+                                <style>
+                                    .btn_big_r{
+                                        border: none;
+                                    }
+                                </style>
+                                <!--<button class="Save sel_w btn_big_r" href="" style="background:#CCC">取消</button>-->
+                            </form>
+                            <!--<form model-node="avatar_setting_form" enctype="multipart/form-data" action="../question/questionsList.html?_ijt=q3nqce0pepbjuv1rh2c72ebheaindex.php?app=basic&amp;mod=Account&amp;act=doSaveAvatar&amp;step=save" method="post" style="display:none;">-->
+                                <!--<dl class="form-avatar">-->
+                                    <!--<dd class="pb20" style="position:relative">-->
+                                        <!--<div model-node="avatar_area" class="mod-avatar left" style="width:300px; margin-bottom:10px; border-right:1px solid #E5E5E5; position:relative"></div>-->
+                                        <!--<div class="mod-avatar left" style="">-->
+                                            <!--<div model-node="avatar_preview" class="left" style=" width: 200px; height: 200px; border:1px solid #B4B5AF; overflow:hidden; position:absolute; top:0; right:0"></div>-->
+                                        <!--</div>-->
+                                    <!--</dd>-->
+                                    <!--<dd>-->
+                                        <!--<input event-node="avatar_picurl" type="hidden" name="picurl">-->
+                                        <!--<input event-node="avatar_picwidth" type="hidden" name="picwidth">-->
+                                        <!--<input event-node="avatar_fullpicurl" type="hidden" name="fullpicurl">-->
+                                        <!--<input event-node="avatar_x1" type="hidden" name="x1">-->
+                                        <!--<input event-node="avatar_y1" type="hidden" name="y1">-->
+                                        <!--<input event-node="avatar_x2" type="hidden" name="x2">-->
+                                        <!--<input event-node="avatar_y2" type="hidden" name="y2">-->
+                                        <!--<input event-node="avatar_w" type="hidden" name="w">-->
+                                        <!--<input event-node="avatar_h" type="hidden" name="h">-->
+                                        <!--<div>图片保存之后将自动生成不同尺寸的头像</div>-->
+                                        <!--<a event-node="avatar_save" event-args="tip=确认保存头像？" class="Save sel_w btn_big_r" href="../question/questionsList.html?_ijt=q3nqce0pepbjuv1rh2c72ebheamy/set_up/head_portrait.html#">保存</a>-->
+                                        <!--<a event-node="avatar_reset" class="Save sel_w btn_big_r" href="../question/questionsList.html?_ijt=q3nqce0pepbjuv1rh2c72ebheamy/set_up/head_portrait.html#" style="background:#CCC">取消</a>-->
+                                    <!--</dd>-->
+                                <!--</dl>-->
+                            <!--</form>-->
+                        </div>
+                    </div>
+                </li>
+                <li class="center_right " v-if="showPsd">
+                <!-- 修改密码 -->
+                <div class="center_right_con Manage_all">
+                    <form class="infobox">
+                        <dl>
+                            <dt><span>*</span>旧密码：</dt>
+                            <dd>
+                                <input class="inp01" type="password" rel="请输入原密码" name="oldpassword">
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt><span>*</span>新密码：</dt>
+                            <dd>
+                                <input class="inp01" type="password" rel="请输入新密码" name="password">
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt><span>*</span>确认密码：</dt>
+                            <dd>
+                                <input class="inp01" type="password" rel="请输入确认密码" name="repassword">
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dd>
+                                <a href="javascript:;" class="btn" id="edit-password" type="submit" style="height: 40px;line-height: 40px;">保存</a>
+                            </dd>
+                        </dl>
+                    </form>
+                </div>
+
+            </li>
+          </ul>
+        </div>
+    </div>
+    <style>
+        .post-service{
+            position: fixed;
+            bottom: 0;
+        }
+    </style>
+        <!--footer start-->
+    <div class="post-service yensen">
+
+            <div class="copyright-box">
+                Copyright 2017 seition All Rights Reserved  |  蜀ICP 备 16004612号        </div>
+        </div>
+</div>
+    <!--footer end-->
+<i id="webname" title="changeMyInfo"></i>
+<script src="../../js/vue.min.js"></script>
+<script src="../../js/vuex.js"></script>
+<script src="../../js/vue-cookies.js"></script>
+<script src="../../js/common.js"></script>
+<script src="../../js/axios.js" ></script>
+<script src="../../js/dynamic2.js"></script>
+<script src="../../js/changeMyInfo.js"></script>
+</body></html>

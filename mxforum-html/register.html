@@ -1,0 +1,118 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>注册</title>
+   <meta name="viewport" charset="UTF-8" content="user-scalable=no"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta property="qc:admins" content="1403267155765154541656375" />
+    <meta property="wb:webmaster" content="fdcd9430a88b1552" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+
+</head>
+<body>
+
+
+
+<style>
+
+</style>
+<div class="header">
+    <div class="loginhead">
+        <div class="wrap">
+                        <div class="fr" style="float: right;margin-top: 10px;font-size: 14px;color: #fff;">已有账号？<a href="login.html" style="color: #fff;margin-left: 15px;padding-left: 15px;border-left: solid 1px #a0a0a0;">登录</a></div>
+            <div class="logo"><a href="./html/group/group.html" title="logo"><img style="margin: 4px 0px;" src="./images/logo.png" width="150" height="52"/></a></div>
+        </div>
+    </div>
+</div>
+<!--header end-->
+
+
+
+<div class="content" id="content">
+    <div class="wrap">
+        <div class="logincontent reg_set_info">
+            <div class="title"><em></em>注册账号</div>
+            <validator name="myForm">
+            <form class="loginform" >
+                <input type="hidden" id="mount_reg"  value ="" />
+                <div id="phoneReg"  style='display: block;'>
+                        <dl>
+                            <dt><span>*</span>手机:</dt>
+                            <dd>
+                                <input class="inp" type="tel" v-model="mobile" id="prphone" @blur="changeMobile" placeholder="请输入手机号码" />
+                                <span class="marphone" v-if="errMobile != ''">{{errMobile}}</span>                       </dd>
+                                <span class="marcode" v-if="datamobile">{{datamobile}}</span></dd>
+                        </dl>
+                        <dl>
+                            <dt><span>*</span>验证码:</dt>
+                            <dd>
+                                <input class="inp" type="text" v-model="code" initial='off' v-validate:code="{required:true,minlength:4,maxlength:4 }" id="prverify" placeholder="请输入收到的验证码" style="width:145px;">
+                                <a class="yzm width80" @click="getCode" v-if="getCodes" id="getverify">获取验证码</a>
+                                <span class="width97" v-if="countDown" >{{countDown}}s 后可重新发送</span>
+                                <span class="marcode" v-if="$myForm.code.maxlength">请填写4位数的验证码</span>
+                                <span class="marcode" v-if="$myForm.code.minlength">请填写4位数的验证码</span>
+                                <span class="marcode" v-if="datacode">{{datacode}}</span>
+
+                            </dd>
+                        </dl>
+
+                        <dl>
+                            <dt><span>*</span>设置密码:</dt>
+                            <dd>
+                                <input class="inp" id="prpassword" type="password" v-model="password" initial='off' v-validate:psw="{required:true,minlength:6,maxlength:20 }" placeholder="请设置登录密码，6-20个字符"><span id="marpassword"></span>
+                                <span class="marcode" v-if="$myForm.psw.maxlength">请填写6-20位数的密码</span>
+                                <span class="marcode" v-if="$myForm.psw.minlength">请填写6-20位数的密码</span>
+                            </dd>
+                        </dl>
+                    <style>
+                        .marcode,.marphone{
+                            color: red;
+                        }
+                    </style>
+                        <dl>
+                            <dd>
+                                <input id="register" type="button" @click="submit" value="立即注册">
+                            </dd>
+                        </dl>
+                    </div>
+               </form>
+            </validator>
+        </div>
+        <style>
+            #register{
+            width: 52%;
+                color: #fff;
+                border: 0;
+                border-radius: 3px;
+            height: 40px;
+            background-color: #00BED4;
+        }
+            .loginform{
+                width: 700px;
+            }
+        </style>
+ 
+    </div>
+</div>
+<!--itembox end-->
+
+    <!--footer start-->
+    <div class="post-service yensen">
+
+        <div class="copyright-box">
+            Copyright 2017 seition All Rights Reserved  |  蜀ICP 备 16004612号        </div>
+    </div>
+    <!--footer end-->
+
+
+<i id="webname" title="register"></i>
+<script src="https://unpkg.com/vue@1.0.26/dist/vue.min.js"></script>
+<script src="https://cdn.bootcss.com/vue-validator/2.1.3/vue-validator.js"></script>
+<script src="./js/dynamic2.js"></script>
+<script src="js/axios.js"></script>
+<script src="js/register.js"></script>
+
+</body>
+</html>
