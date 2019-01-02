@@ -1,0 +1,76 @@
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>网上超市</title>
+<link href="{{ static_url('css/public.css') }}" type="text/css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="{{ static_url('css/base.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ static_url('css/checkOut.css') }}">
+{% block custom_css %}
+{% end %}
+</head>
+
+<body>
+ <!--顶部快捷菜单-->
+    <div class="shortcut_v2013 alink_v2013">
+        <div class="w">
+            <ul class="fl 1h">
+
+                <li class="fl"><i class="shortcut_s"></i></li>
+
+                <li class="fl"><div class="menu_hd"><a href="#">请登录</a></div></li>
+                <li class="fl"><div class="menu_hd"><a href="#">免费注册</a></div></li>
+            </ul>
+            <ul class="fr 1h">
+                <li class="fl"><div class="menu_hd"><a href="#">我的订单</a></div></li>
+                <li class="fl"><i class="shortcut_s"></i></li>
+                <li class="fl"><div class="menu_hd"><a href="#">我的锡货</a></div></li>
+                <li class="fl"><i class="shortcut_s"></i></li>
+                <li class="fl"><div class="menu_hd"><a href="#">服务中心</a></div></li>
+                <li class="fl"><i class="shortcut_s"></i></li>
+                <li class="fl"><div class="menu_hd"><a href="#">商家入驻</a></div></li>
+                <li class="fl"><i class="shortcut_s"></i></li>
+                <li class="fl">
+                    <div class="menu">
+                        <div class="menu_hd"><a href="#">网站导航</a><b><em></em></b></div>
+                        <div class="menu_bd">
+                            <ul>
+                                <li><a href="#">网站导航</a></li>
+                                <li><a href="#">网站导航</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <span class="clr"></span>
+        </div>
+    </div>
+
+   <div class="banner_red_top">
+
+  </div>
+{% block body %}
+ <h2>bobby</h2>
+ {% end %}
+ <div class="promise_box">
+    	<div class="w">
+    		<ul>
+        		<li><img src="{{ static_url('images/promise_img01.jpg') }}"><span>365天不打烊</span></li>
+        		<li><img src="{{ static_url('images/promise_img02.jpg') }}"><span>无理由退换货</span></li>
+        		<li><img src="{{ static_url('images/promise_img03.jpg') }}"><span>担保交易</span></li>
+        		<li><img src="{{ static_url('images/promise_img04.jpg') }}"><span>先行赔付</span></li>
+        		<li><img src="{{ static_url('images/promise_img05.jpg') }}"><span>支持定制</span></li>
+        	</ul>
+    	</div>
+    </div>
+
+    <div class="footer_v2013 bottom-about">
+        <div class="w">
+            <p class="foot_p1">
+                <a href="#">首页</a>|<a href="#">招聘英才</a>|<a href="#">广告合作</a>|<a href="#">联系我们</a>|<a href="#">关于我们</a>
+            </p>
+                <pre>    经营许可证：ICP备13041162号-1360网站安全检测平台
+                </pre>
+        </div>
+    </div>
+{% block custom_js %}
+{% end %}
+</body></html>

@@ -1,0 +1,35 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="{{ static_url('style.css') }}">
+</head>
+<body>
+<form action="/" method="post" class="smart-green">
+    <h1>留言信息
+        <span>请留下你的信息.</span>
+    </h1>
+    <!--<input id="id" type="hidden" name="id" value="{{ id }}" />-->
+    {% autoescape None %}
+    {% for field in message_form %}
+        <span>{{ field.label.text }} :</span>
+        {{ field(placeholder="请输入"+field.label.text) }}
+
+        {% if field.errors %}
+            {% for error_msg in field.errors %}
+                <div class="error-msg">{{ error_msg }}</div>
+            {% end %}
+            {% else %}
+                <div class="error-msg"></div>
+        {% end %}
+    {% end %}
+    <label>
+        <span>&nbsp;</span>
+        <input type="submit" class="button" value="提交"/>
+    </label>
+</form>
+
+</body>
+</html>

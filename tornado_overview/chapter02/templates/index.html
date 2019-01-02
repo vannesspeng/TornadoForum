@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block body %}
+ <div class="border_top_cart">
+<div class="container">
+    <div class="checkout-box">
+        <form id="checkoutForm" action="#" method="post">
+
+            <div class="checkout-box-ft">
+                <div id="checkoutGoodsList" class="checkout-goods-box">
+                                    <div class="xm-box">
+                    <div class="box-hd">
+                        <h2 class="title">确认订单信息</h2>
+                    </div>
+                    <div class="box-bd">
+                        <dl class="checkout-goods-list">
+                            <dt class="clearfix">
+                                <span class="col col-1">商品名称</span>
+                                <span class="col col-2">购买价格</span>
+                                <span class="col col-3">购买数量</span>
+                                <span class="col col-4">小计（元）</span>
+                            </dt>
+                            {% set total = 0 %}
+                            {% for order in orders %}
+                                <dd class="item clearfix">
+                                    <div class="item-row">
+                                        <div class="col col-1">
+                                            <div class="g-pic">
+                                                <img src="{{ order['image'] }}" srcset="{{ order['image'] }} 2x" width="40" height="40">
+                                            </div>
+                                            <div class="g-info">{{ order['name'] }}</a></div>
+                                        </div>
+                                        {{ total = total+order['price']*order['nums'] }}
+                                        {% from chapter02.utils import cal_total %}
+                                        <div class="col col-2">{{ order['price'] }}元</div>
+                                        <div class="col col-2">{{ order['nums'] }}</div>
+                                        <div class="col col-2">{{ cal_total(order['price'],order['nums']) }}元</div>
+                                        <div class="col col-2">{% raw order['detail'] %} </div>
+                                    </div>
+                                </dd>
+                            {% end %}
+
+                        </dl>
+                        <div class="checkout-count clearfix">
+
+                            <div class="checkout-price">
+                                <ul>
+                                    <li>
+                                       订单总额：<span>{{ total }}元</span>
+                                    </li>
+                                    <li>
+                                        运费：<span id="postageDesc">0元</span>
+                                    </li>
+                                </ul>
+                                <p class="checkout-total">应付总额：<span><strong id="totalPrice">244.00</strong>元</span></p>
+                            </div>
+                            <!--  -->
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </form></div>
+
+</div>
+</div>
+{% end %}

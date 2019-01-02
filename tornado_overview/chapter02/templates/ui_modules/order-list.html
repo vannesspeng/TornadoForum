@@ -1,0 +1,16 @@
+<dd class="item clearfix">
+    <div class="item-row">
+        <div class="col col-1">
+            <div class="g-pic">
+                <img src="{{ order['image'] }}" srcset="{{ order['image'] }} 2x" width="40" height="40">
+            </div>
+            <div class="g-info">{{ order['name'] }}</a></div>
+        </div>
+        {{ total = total+order['price']*order['nums'] }}
+        {% from chapter02.utils import cal_total %}
+        <div class="col col-2">{{ order['price'] }}元</div>
+        <div class="col col-2">{{ order['nums'] }}</div>
+        <div class="col col-2">{{ cal_total(order['price'],order['nums']) }}元</div>
+        <div class="col col-2">{% raw order['detail'] %} </div>
+    </div>
+</dd>
