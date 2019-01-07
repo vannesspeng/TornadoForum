@@ -11,12 +11,23 @@ web_url = "http://127.0.0.1:8888"
 def test_sms():
     url = "{}/code/".format(web_url)
     data = {
-        "mobile":"13720297495"
+        "mobile":"13720297493"
     }
     res = requests.post(url, json=data)
 
     print(json.loads(res.text))
 
+def test_register():
+    url = "{}/register/".format(web_url)
+    data = {
+        "mobile": "13720297493",
+        "code":"4259",
+        "password":"admin123"
+    }
+    res = requests.post(url, json=data)
+
+    print(json.loads(res.text))
 
 if __name__ == "__main__":
-    test_sms()
+    # test_sms()
+    test_register()
