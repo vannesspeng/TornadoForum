@@ -12,17 +12,19 @@ settings = {
     "static_path": os.path.join(BASE_DIR, "media"),
     "static_url_prefix": "/static/",
     "template_path": "templates",
+    "secret_key": "ZGGA#Mp4yL4w5CDu",
+    "jwt_expire": 7 * 24 * 3600,
     'MEDIA_ROOT': os.path.join(BASE_DIR, "media"),
-    "SITE_URL":"http://127.0.0.1:8888",
+    "SITE_URL": "http://127.0.0.1:8888",
     "db": {
         "host": "127.0.0.1",
         "user": "root",
         "password": "root",
-        "name": "message",
+        "name": "myforum",
         "port": 3306
     },
     "redis": {
-        "host":"127.0.0.1"
+        "host": "127.0.0.1"
     }
 }
 

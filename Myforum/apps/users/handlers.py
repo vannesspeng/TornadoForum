@@ -3,14 +3,67 @@
 # author:pyy
 # datetime:2018/12/29 10:33
 import json
+from datetime import datetime
 from random import choices
 
+import jwt
 from tornado.web import RequestHandler
 
-from Myforum.Forum.handlers import RedisHandler
-from Myforum.apps.users.forms import SmsCodeForm, RegisterForm
+from Myforum.Forum.handlers import RedisHandler, BaseHandler
+from Myforum.Forum.settings import settings
+from Myforum.apps.users.forms import SmsCodeForm, RegisterForm, LoginForm
 from Myforum.apps.users.models import User
 from Myforum.apps.utils.AsyncYunPian import AsyncYunPian
+
+class LoginHandler(BaseHandler):
+    async def post(self, *args, **kwargs):
+        # 声明返回的数据字典
+        re_data = {}
+        # 获取post参数请求
+        param = self.request.body.decode("utf8")
+        param = json.loads(param)
+        # 新建login_form
+        login_form = LoginForm.from_json(param)
+        if login_form.validate():
+            # 获取post参数数据
+            mobile = login_form.mobile.data
+            passoword = login_form.password.data
+            #先判断用户是否存在
+            try:
+                # 数据库查询属于耗时IO操作，需要加上await关键字
+                user = await self.application.objects.get(User, mobile=mobile)
+                # 说明用户存在，接下来验证密码是否正确
+                if not user.password.check_password(passoword):
+                    self.set_status(400)
+                    re_data["non_fields"] = "用户名或密码错误"
+                else:
+                    # 说明密码正确，登录成功
+                    # 这里使用JWT进行验证
+                    payload = {
+                        "id": user.id,
+                        "nickname": user.nick_name,
+                        "exp": datetime.utcnow()
+                    }
+                    token = jwt.encode(payload, settings['secret_key'], algorithm='HS256')
+                    re_data['id'] = user.id
+                    if user.nick_name is not None:
+                        re_data['nick_name'] = user.nick_name
+                    else:
+                        re_data['nick_name'] = user.mobile
+                    re_data['token'] = token.decode("utf8")
+
+            except User.DoesNotExist as e:
+                # 说明查询用户结果是用户不存在
+                self.set_status(400)
+                re_data["mobile"] = "用户不存在"
+        else:
+            # 设置http状态码为400：参数错误
+            self.set_status(400)
+            for field in login_form.errors:
+                re_data[field] = login_form.errors[field][0]
+        self.finish(re_data)
+
+
 
 class RegisterHandler(RedisHandler):
     async def post(self, *args, **kwargs):
