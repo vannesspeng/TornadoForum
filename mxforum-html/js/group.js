@@ -1,7 +1,7 @@
 /**
  * Created by Think on 2018/7/14.
  */
-axios.defaults.baseURL = 'http://39.104.13.197:8000/';
+axios.defaults.baseURL = 'http://127.0.0.1:8888/';
 let vm = new Vue({
     el:"#content",
     data:{
@@ -26,13 +26,13 @@ let vm = new Vue({
     created(){
         this.showname();
         this.getGroup("");
-        this.hottGroup("new")
+        this.hottGroup("hot")
     },
     methods:{
         getGroup(category){
             let that = this;
             that.category = category;
-            axios.get('/groups/?c='+category,{
+            axios.get('/groups/?c='+category + "&o=new",{
                 }).then(function (req) {
                 that.groupMsg = req.data;
                 if(store.state.tesssionid){
@@ -43,15 +43,15 @@ let vm = new Vue({
                 }).catch(function (err) {
                     console.log(err)
                 });
-            if(category == 'new'){
+            if(category == ''){
                 that.number = 1
-            }else if(category == '教育同盟'){
+            }else if(category == 'Python Web开发'){
                 that.number = 2
-            }else if(category == '同城交易'){
+            }else if(category == '网络爬虫'){
                 that.number = 3
-            }else if(category == '程序设计'){
+            }else if(category == '云计算与数据分析'){
                 that.number = 4
-            }else if(category == '生活兴趣'){
+            }else if(category == '人工智能'){
                 that.number = 5
             }
         },
@@ -68,13 +68,13 @@ let vm = new Vue({
             });
             if(order == 'new'){
                 that.hotnumber = true
-            }else {
+            }else{
                 that.hotnumber = false
             }
         },
-        hottGroup(category){
+        hottGroup(order){
             let that = this;
-            axios.get('/groups/?limit=5',{
+            axios.get('/groups/?o='+ order +'&limit=5',{
             }).then(function (req) {
                 that.hotGroup = req.data;
             }).catch(function (err) {
@@ -102,8 +102,15 @@ let vm = new Vue({
                 }
             }).then((req)=>{
                 console.log(req.data)
+                alert('加入小组成功！')
+                location.href = '../../html/group/group.html'
             }).catch((err)=>{
-                console.log(err)
+                console.log(err);
+                    if(err.response.status === 400){
+                        if(err.response.data.non_fields){
+                            alert(err.response.data.non_fields)
+                        }
+                    }
             })
         }
     }

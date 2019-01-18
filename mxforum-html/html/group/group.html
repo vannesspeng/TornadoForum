@@ -77,11 +77,11 @@
         <div class="gu-pos">
             <div class="square"><div class="btns-icon"></div>
                 <ul>
-                    <li :class="{cate_li: number === 1}" @click="getGroup('new')"><a href="#">全部</a></li>
-                     <li :class="{cate_li: number === 2}"><a href="#"  @click="getGroup('教育同盟')"> 教育同盟</a></li>
-                    <li :class="{cate_li: number === 3}"><a href="#"  @click="getGroup('同城交易')">同城交易</a></li>
-                    <li :class="{cate_li: number === 4}"><a href="#"  @click="getGroup('程序设计')">程序设计</a></li>
-                    <li :class="{cate_li: number === 5}"><a href="#"  @click="getGroup('生活兴趣')"> 生活兴趣</a></li>
+                    <li :class="{cate_li: number === 1}" @click="getGroup('')"><a href="#">全部</a></li>
+                     <li :class="{cate_li: number === 2}"><a href="#"  @click="getGroup('Python Web开发')">Python Web开发</a></li>
+                    <li :class="{cate_li: number === 3}"><a href="#"  @click="getGroup('网络爬虫')">网络爬虫</a></li>
+                    <li :class="{cate_li: number === 4}"><a href="#"  @click="getGroup('云计算与数据分析')">云计算与数据分析</a></li>
+                    <li :class="{cate_li: number === 5}"><a href="#"  @click="getGroup('人工智能')">人工智能</a></li>
                 </ul>
             </div>
             <div class="com-btns"><span>综合排序</span><div class="btns-icon"></div>
@@ -125,7 +125,7 @@
                 <h4>热门小组</h4>
                 <ul>
                     <li v-if="hotGroup.length" v-for="(item,index) in hotGroup">
-                        <img :src="groupMsg[item].front_image">
+                        <img :src="hotGroup[item].front_image">
                         <div class="recommend">
                             <p>{{hotGroup[item].desc}}</p>
                             <i>{{hotGroup[item].member_nums}}个成员</i>

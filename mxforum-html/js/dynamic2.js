@@ -219,8 +219,8 @@ for(let i = 0; i < linkurls.length; i++){
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-let global = '1367915';
-// let global = '136791';
+//let global = '1367915';
+let global = '136792';
 /* harmony default export */ __webpack_exports__["a"] = ({global});
 
 /***/ })
