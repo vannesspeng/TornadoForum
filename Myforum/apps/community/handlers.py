@@ -119,3 +119,25 @@ class GroupMemberHandler(BaseHandler):
             for field in form.errors:
                 re_data[field] = form.errors[field][0]
         self.finish(re_data)
+
+
+class GroupDetailHanlder(BaseHandler):
+    @authenticated_async
+    async def get(self, group_id, *args, **kwargs):
+        # 获取group基本信息
+        re_data = {}
+        try:
+            group = await self.application.objects.get(CommunityGroup, id=int(group_id))
+            item_dict = {}
+            item_dict["name"] = group.name
+            item_dict["id"] = group.id
+            item_dict["desc"] = group.desc
+            item_dict["notice"] = group.notice
+            item_dict["member_nums"] = group.member_nums
+            item_dict["post_nums"] = group.post_nums
+            item_dict["front_image"] = "{}/media/{}".format(self.settings["SITE_URL"], group.front_image)
+            re_data = item_dict
+        except CommunityGroup.DoesNotExist as e:
+            self.set_status(400)
+
+        self.finish(re_data)
