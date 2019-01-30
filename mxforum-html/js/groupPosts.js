@@ -6,7 +6,7 @@ $(document).ready(
     $.ajax({
         cache: false,
         dataType: 'json',
-        url: "http://39.104.13.197:8000/groups/8/posts/",
+        url: "http://127.0.0.1:8888/groups/8/posts/",
         type: 'get',
         contentType: "application/json; charset=utf-8",
         async: true,

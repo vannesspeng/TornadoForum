@@ -1,4 +1,4 @@
-axios.defaults.baseURL = 'http://39.104.13.197:8000/';
+axios.defaults.baseURL = 'http://127.0.0.1:8888/';
 let vm = new Vue({
     el:'#content',
     data:{
@@ -40,6 +40,11 @@ let vm = new Vue({
         },
         getPosts(category){
             let that = this;
+            if(category == "excellent"){
+                post_url = '/groups/'+that.groupId+'/posts/?cate=excellent';
+            }else{
+                post_url = '/groups/'+that.groupId+'/posts/';
+            }
             axios.get('/groups/'+that.groupId+'/posts/?cate='+category,{
                 headers:{
                     "tsessionid":store.state.tesssionid

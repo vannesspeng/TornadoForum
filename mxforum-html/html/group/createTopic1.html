@@ -5,7 +5,7 @@
     
     <title>发帖</title>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
     <meta property="qc:admins" content="1403267155765154541656375">
     <meta property="wb:webmaster" content="fdcd9430a88b1552">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -22,7 +22,7 @@
     <div class="header_new2">
         <div class="top1">
             <div class="top1img">
-                <a href="/html/group/group.html" style="display: block;float: left;"><img src="createtopics/img/logo.png" width="150" data-bd-imgshare-binded="1"></a>
+                <a href="/html/group/group.html" style="display: block;float: left;"><img src="../../images/logo.png" width="150" data-bd-imgshare-binded="1"></a>
             </div>
 
             <div class="nav">
@@ -75,7 +75,8 @@
 <link href="createtopics/css/base-min.css" rel="stylesheet">
 
 <link href="createtopics/css/editor-pkg-sprite-min.css" rel="stylesheet">
-
+<link href="createtopics/css/_header_footer.css" rel="stylesheet">
+<link href="createtopics/css/basic_new.css" rel="stylesheet">
 <link href="createtopics/css/editor-pkg-min-datauri.css" rel="stylesheet">
 
 <link href="createtopics/css/group.css" rel="stylesheet" type="text/css">
@@ -86,15 +87,15 @@
     .internalBox:after{clear: both;display: block;height: 0;visibility: visible;content: "";}
     .breadInter{width: 1200px;margin: 0 auto;}
     .sk_main .sk_r{width: 315px;}
+    .content_holder{margin-top: 50px}
 </style>
 <div class="content_holder">
 <div class="breadcrumb">
     <div class="breadInter">
-        <a href="http://localhost:63342/untitled1/product0606/content/community/group.htmlindex.php?app=group&amp;mod=Index&amp;act=index" style="padding-left:0;">小组</a>&gt;<a href="http://localhost:63342/untitled1/product0606/content/community/group.htmlindex.php?app=group&amp;mod=Index&amp;act=view&amp;gid=174">Python交流角</a>&gt;
-        <a>《这是发布的第一条数据！！》</a>
+        <a href="http://127.0.0.1/html/group/group.html" style="padding-left:0;">小组</a>&gt;<a href="">{{thisGroup.name}}</a>&gt;
     </div>
 
-    <div class="title">
+    <div class="title" style="width:1200px; margin:0 auto">
         <h2 class="h2">帖子标题：</h2>
         <textarea class="thisTitle" v-model="title" name="title" id="" cols="72" rows="1"></textarea>
     </div>
@@ -128,7 +129,7 @@
         }
         .h3{
             margin-bottom: 15px;
-            padding-left: 5px;
+            padding-left: 0px;
         }
     </style>
 

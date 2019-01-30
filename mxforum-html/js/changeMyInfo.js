@@ -1,5 +1,5 @@
 
-axios.defaults.baseURL = 'http://39.104.13.197:8000/';
+axios.defaults.baseURL = 'http://127.0.0.1:8888/';
 
 let vm = new Vue({
     el:'#content',
@@ -106,7 +106,7 @@ let vm = new Vue({
                         "Content-Type": "multipart/form-data"
                     }
             }).then((res)=>{
-                that.image = 'http://39.104.13.197:8000' + res.data.image
+                that.image = 'http://127.0.0.1:8888' + res.data.image
             }).catch((err)=>{
                 console.log(err)
             })

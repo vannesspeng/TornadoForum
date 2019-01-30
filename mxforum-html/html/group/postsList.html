@@ -105,10 +105,10 @@
                 <div class="classmain">
                     <div class="classmain-hd">
                         <ul>
-                            <li id="all" :class="{on: all === true}" @click="getPosts('全部帖子')"><a
+                            <li id="all" :class="{on: all === true}" @click="getPosts('all')"><a
                                     href="javascript:;">全部帖子</a>
                             </li>
-                            <li :class="{on: all === false}"@click="getPosts('精华帖子')">
+                            <li :class="{on: all === false}"@click="getPosts('excellent')">
                                 <a href="javascript:;" >精华帖子</a>
                             </li>
                         </ul>
@@ -122,6 +122,7 @@
                                 <li v-if="postsList.length" v-for="item in postsList">
                                     <h3>
                                         <a href="./thisPost.html?postId={{item.id}}">{{item.title}}</a>
+                                        <span style="float: right;padding-right: 15px;color: #999;">{{item.add_time}}</span>
                                     </h3>
                                     <div class="info">
                                         <div class="fr"><span class="icon-pl"></span>{{item.comment_num}}</div>

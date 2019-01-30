@@ -93,7 +93,7 @@ $(":submit").on("click",function(){
 
 
         var options = {
-            url:"http://39.104.13.197:8000/groups/1/",
+            url:"http://127.0.0.1:8888/groups/1/",
             headers:{
                 "tsessionid": token
             },

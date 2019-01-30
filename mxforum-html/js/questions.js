@@ -28,7 +28,7 @@ new Vue({
         getquestions () {
             console.log(store.state.notLogin);
             let that = this;
-            axios.get("http://39.104.13.197:8000/questions/",{
+            axios.get("http://127.0.0.1:8888/questions/",{
                 params:{
                     "o":"new",
                     "c":"技术分享"

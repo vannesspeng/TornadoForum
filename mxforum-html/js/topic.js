@@ -3,12 +3,12 @@
  */
 
 
-axios.defaults.baseURL = 'http://39.104.13.197:8000/';
+axios.defaults.baseURL = 'http://127.0.0.1:8888/';
 
 new Vue({
    el:"#content" ,
     data:{
-        urlPrv:"http://39.104.13.197:8000/",
+        urlPrv:"http://127.0.0.1:8888/",
         // comments:[],
         thisPost:{},
         thiscomment:{},
@@ -33,7 +33,7 @@ new Vue({
         getPost:function(){
             let that = this;
             if(!store.state.tesssionid){
-                location.href = "../../login.html"
+                location.href = "../login.html"
             }
             that.postId = location.href.split('=')[1];
             axios.get("/posts/"+that.postId+"/",{

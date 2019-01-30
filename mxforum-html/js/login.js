@@ -29,7 +29,7 @@ var vm = new Vue({
                     this.$cookies.set('tesssionid',res.data.token);
                     this.$cookies.set('nick_name',res.data.nick_name);
                     this.$cookies.set('user_id',res.data.id);
-                    location.href = './html/group/group.html'
+                    location.href = './group/group.html'
 
                 }).catch(function (err) {
                     console.log(err);
