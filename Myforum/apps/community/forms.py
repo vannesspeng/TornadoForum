@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 # author:pyy
 # datetime:2019/1/9 15:20
 from wtforms import StringField, TextAreaField
@@ -16,3 +16,7 @@ class CommunityGroupForm(Form):
 
 class GroupApplyForm(Form):
     apply_reason = StringField("申请理由", validators=[DataRequired("请输入申请理由")])
+
+class PostForm(Form):
+    title = StringField("标题", validators=[DataRequired("请输入标题")])
+    content = StringField("内容", validators=[DataRequired("请输入内容")])

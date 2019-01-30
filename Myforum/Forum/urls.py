@@ -8,6 +8,7 @@ from tornado.web import url, StaticFileHandler
 import Myforum.apps.users.urls as user_urls
 import Myforum.apps.community.urls as community_urls
 import Myforum.apps.question.urls as question_urls
+import Myforum.apps.ueditor.urls as ueditor_urls
 from Myforum.Forum.handlers import IndexHandler
 from Myforum.Forum.settings import settings
 
@@ -18,5 +19,6 @@ urlpattern = [
 
 urlpattern += user_urls.urlpattern
 urlpattern += community_urls.urlpattern
+urlpattern += ueditor_urls.urlpattern
 urlpattern += question_urls.urlpattern
 

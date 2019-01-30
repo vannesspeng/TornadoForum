@@ -11,8 +11,8 @@ from playhouse.shortcuts import model_to_dict
 
 from Myforum.Forum.handlers import BaseHandler
 from Myforum.Forum.settings import settings
-from Myforum.apps.community.forms import CommunityGroupForm, GroupApplyForm
-from Myforum.apps.community.models import CommunityGroup, CommunityGroupMember
+from Myforum.apps.community.forms import CommunityGroupForm, GroupApplyForm, PostForm
+from Myforum.apps.community.models import CommunityGroup, CommunityGroupMember, Post
 from Myforum.apps.utils.decorators import authenticated_async
 from Myforum.apps.utils.util_func import json_serial
 
@@ -73,11 +73,10 @@ class GroupHandler(BaseHandler):
                     async with aiofiles.open(file_path, 'wb') as f:
                         await f.write(meta['body'])
                 group = await self.application.objects.create(CommunityGroup,
-                                                        creator=self.current_user,
-                                                        category=group_form.category.data,
-                                                        desc=group_form.desc.data,
-                                                        notice=group_form.notice.data,
-                                                        front_image=new_filename)
+                                                              add_user=self.current_user, name=group_form.name.data,
+                                                              category=group_form.category.data,
+                                                              desc=group_form.desc.data,
+                                                              notice=group_form.notice.data, from_image=new_filename)
                 re_data["id"] = group.id
         else:
             self.set_status(400)
@@ -111,8 +110,6 @@ class GroupMemberHandler(BaseHandler):
                 group.member_nums += 1
                 result = await self.application.objects.update(group, ["member_nums"])
                 # 该小组的成员数加1
-
-
                 re_data["id"] = community_member.id
         else:
             self.set_status(400)
@@ -141,3 +138,92 @@ class GroupDetailHanlder(BaseHandler):
             self.set_status(400)
 
         self.finish(re_data)
+
+class PostHandler(BaseHandler):
+    @authenticated_async
+    async def get(self, group_id, *args, **kwargs):
+        post_list = []
+        # 查询group是否存在
+        try:
+            group = await self.application.objects.get(CommunityGroup, id=int(group_id))
+            # 查询当前用户是否为当前组的组员，只有组员才能查看
+            group_member = await self.application.objects.get(CommunityGroupMember, user=self.current_user,
+                                                              community=group, status="agree")
+
+            posts_query = Post.extend()
+            c = self.get_argument("cate", None)
+            if c == "hot":
+                posts_query = posts_query.filter(Post.is_hot == True)
+            if c == "excellent":
+                posts_query = posts_query.filter(Post.is_excellent == True)
+            posts = await self.application.objects.execute(posts_query)
+
+            for post in posts:
+                item_dict = {
+                    "user": {
+                        "id": post.user.id,
+                        "nick_name": post.user.nick_name
+                    },
+                    "id": post.id,
+                    "title": post.title,
+                    "content": post.content,
+                    "comment_nums": post.comment_nums,
+                    "add_time": post.add_time.strftime("%Y-%m-%d %H:%M:%S")
+                }
+                post_list.append(item_dict)
+        except CommunityGroup.DoesNotExist as e:
+            self.set_status(403)
+        except CommunityGroupMember.DoesNotExist as e:
+            self.set_status(404)
+        self.finish(json.dumps(post_list, default=json_serial))
+
+
+    @authenticated_async
+    async def post(self, group_id,  *args, **kwargs):
+        re_data = {}
+        params = self.request.body.decode("utf8")
+        params = json.loads(params)
+        form = PostForm.from_json(params)
+        if form.validate():
+            # 查询用户发帖的小组
+            try:
+                group = await self.application.objects.get(CommunityGroup, id=int(group_id))
+                # 在处理发帖之前要校验一下，用户是否为小组成员
+                group_member = await self.application.objects.get(CommunityGroupMember, user=self.current_user,
+                                                            community=group, status="agree")
+                post = await self.application.objects.create(Post, user=self.current_user, group=group,
+                                                             title=form.title.data, content=form.content.data)
+                re_data["id"] = post.id
+            except CommunityGroup.DoesNotExist as e:
+                self.set_status(404)
+            except CommunityGroupMember.DoesNotExist as e:
+                self.set_status(403)
+        else:
+            self.set_status(400)
+            for field in form.errors:
+                re_data[field] = form.errors[field][0]
+        self.finish(re_data)
+
+
+class PostDetailHandler(BaseHandler):
+    @authenticated_async
+    async def get(self, post_id, *args, **kwargs):
+        #获取某一个帖子的详情
+        re_data = {}
+        post_details = await self.application.objects.execute(Post.extend().where(Post.id==int(post_id)))
+        re_count = 0
+        for data in post_details:
+            item_dict = {}
+            item_dict["user"] = model_to_dict(data.user)
+            item_dict["title"] = data.title
+            item_dict["content"] = data.content
+            item_dict["comment_nums"] = data.comment_nums
+            item_dict["add_time"] = data.add_time.strftime("%Y-%m-%d %H:%M:%S")
+            re_data = item_dict
+
+            re_count += 1
+
+        if re_count == 0:
+            self.set_status(404)
+
+        self.finish(json.dumps(re_data, default=json_serial))

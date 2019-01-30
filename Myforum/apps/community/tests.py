@@ -6,7 +6,7 @@ import json
 
 import requests
 web_site_url = "http://127.0.0.1:8888"
-tsessionid = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6Nywibmlja25hbWUiOm51bGwsImV4cCI6MTU0Nzc3NDI1NH0.4zHjJEUDecBphjQVXUx489yJ8cTkeBk021cB-ToOiPc"
+tsessionid = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6Nywibmlja25hbWUiOm51bGwsImV4cCI6MTU0ODI5MTI0NX0.SQi1F97agizAX2LRjWuHU9Z9oxzCWQ97Pu0hLMzxjRY"
 headers = {"tsessionid": tsessionid}
 
 # requests.get(url=web_site_url, headers=headers)
@@ -35,6 +35,17 @@ def apply_group(group_id, apply_reason):
     print(res.status_code)
     print(json.loads(res.text))
 
+def add_post(group_id):
+    #发帖
+    data = {
+        "title":"tornado从入门到实战",
+        "content":"tornado从入门到实战"
+    }
+    res = requests.post("{}/groups/{}/posts/".format(web_site_url, group_id), headers=headers, json=data)
+    print(res.status_code)
+    print(json.loads(res.text))
+
 if __name__ == "__main__":
     # create_group()
-    apply_group(7, "study together!!!")
+    # apply_group(7, "study together!!!")
+    add_post(8)
