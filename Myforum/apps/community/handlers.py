@@ -11,8 +11,9 @@ from playhouse.shortcuts import model_to_dict
 
 from Myforum.Forum.handlers import BaseHandler
 from Myforum.Forum.settings import settings
-from Myforum.apps.community.forms import CommunityGroupForm, GroupApplyForm, PostForm
-from Myforum.apps.community.models import CommunityGroup, CommunityGroupMember, Post
+from Myforum.apps.community.forms import CommunityGroupForm, GroupApplyForm, PostForm, PostComentForm, CommentReplyForm
+from Myforum.apps.community.models import CommunityGroup, CommunityGroupMember, Post, PostComment, CommentLike
+from Myforum.apps.users.models import User
 from Myforum.apps.utils.decorators import authenticated_async
 from Myforum.apps.utils.util_func import json_serial
 
@@ -27,7 +28,7 @@ class GroupHandler(BaseHandler):
         # 根据分类进行过滤
         c = self.get_argument("c", None)
         if c:
-            community_query = community_query.filter(CommunityGroup.category==c)
+            community_query = community_query.filter(CommunityGroup.category == c)
 
         # 根据参数进行排序
         order = self.get_argument("o", None)
@@ -51,7 +52,6 @@ class GroupHandler(BaseHandler):
 
             re_data.append(group_dict)
         self.finish(json.dumps(re_data, default=json_serial))
-
 
     @authenticated_async
     async def post(self, *args, **kwargs):
@@ -98,15 +98,17 @@ class GroupMemberHandler(BaseHandler):
                 # 获取要加入的group对象
                 group = await self.application.objects.get(CommunityGroup, id=int(group_id))
                 # 如果group存在，说明用户已经加入到该group
-                existed = await self.application.objects.get(CommunityGroupMember, user=self.current_user, community=group)
+                existed = await self.application.objects.get(CommunityGroupMember, user=self.current_user,
+                                                             community=group)
                 self.set_status(400)
                 re_data["non_fields"] = "用户已经加入"
 
             except CommunityGroup.DoesNotExist as e:
                 self.set_status(400)
             except CommunityGroupMember.DoesNotExist as e:
-                community_member = await self.application.objects.create(CommunityGroupMember, user=self.current_user, community=group,
-                                                      apply_reason = form.apply_reason.data)
+                community_member = await self.application.objects.create(CommunityGroupMember, user=self.current_user,
+                                                                         community=group,
+                                                                         apply_reason=form.apply_reason.data)
                 group.member_nums += 1
                 result = await self.application.objects.update(group, ["member_nums"])
                 # 该小组的成员数加1
@@ -138,6 +140,7 @@ class GroupDetailHanlder(BaseHandler):
             self.set_status(400)
 
         self.finish(re_data)
+
 
 class PostHandler(BaseHandler):
     @authenticated_async
@@ -177,9 +180,8 @@ class PostHandler(BaseHandler):
             self.set_status(404)
         self.finish(json.dumps(post_list, default=json_serial))
 
-
     @authenticated_async
-    async def post(self, group_id,  *args, **kwargs):
+    async def post(self, group_id, *args, **kwargs):
         re_data = {}
         params = self.request.body.decode("utf8")
         params = json.loads(params)
@@ -190,7 +192,7 @@ class PostHandler(BaseHandler):
                 group = await self.application.objects.get(CommunityGroup, id=int(group_id))
                 # 在处理发帖之前要校验一下，用户是否为小组成员
                 group_member = await self.application.objects.get(CommunityGroupMember, user=self.current_user,
-                                                            community=group, status="agree")
+                                                                  community=group, status="agree")
                 post = await self.application.objects.create(Post, user=self.current_user, group=group,
                                                              title=form.title.data, content=form.content.data)
                 re_data["id"] = post.id
@@ -208,9 +210,9 @@ class PostHandler(BaseHandler):
 class PostDetailHandler(BaseHandler):
     @authenticated_async
     async def get(self, post_id, *args, **kwargs):
-        #获取某一个帖子的详情
+        # 获取某一个帖子的详情
         re_data = {}
-        post_details = await self.application.objects.execute(Post.extend().where(Post.id==int(post_id)))
+        post_details = await self.application.objects.execute(Post.extend().where(Post.id == int(post_id)))
         re_count = 0
         for data in post_details:
             item_dict = {}
@@ -227,3 +229,126 @@ class PostDetailHandler(BaseHandler):
             self.set_status(404)
 
         self.finish(json.dumps(re_data, default=json_serial))
+
+
+class PostCommentHanlder(BaseHandler):
+    @authenticated_async
+    async def get(self, post_id, *args, **kwargs):
+        re_data = []
+        try:
+            post = await self.application.objects.get(Post, id=int(post_id))
+            post_coments = await self.application.objects.execute(
+                PostComment.extend().where(PostComment.post == post, PostComment.parent_comment.is_null(True)).order_by(
+                    PostComment.add_time.desc())
+            )
+            for item in post_coments:
+                has_liked = False
+                try:
+                    comments_like = await self.application.objects.get(CommentLike, post_comment_id=item.id,
+                                                                       user_id=self.current_user.id)
+                    has_liked = True
+                except CommentLike.DoesNotExist:
+                    pass
+
+                item_dict = {
+                    "user": model_to_dict(item.user),
+                    "content": item.content,
+                    "reply_nums": item.reply_nums,
+                    "like_nums": item.like_nums,
+                    "has_liked": has_liked,
+                    "id": item.id,
+                }
+
+                re_data.append(item_dict)
+        except Post.DoesNotExist as e:
+            self.set_status(404)
+        self.finish(json.dumps(re_data, default=json_serial))
+
+    @authenticated_async
+    async def post(self, post_id, *args, **kwargs):
+        re_data = {}
+        param = self.request.body.decode("utf8")
+        param = json.loads(param)
+        form = PostComentForm.from_json(param)
+        if form.validate():
+            try:
+                # 获取对应的帖子实体
+                post = await self.application.objects.get(Post, id=int(post_id))
+                # 数据库中创建评论记录
+                post_comment = await self.application.objects.create(PostComment, user=self.current_user, post=post,
+                                                                     content=form.content.data)
+                # 帖子的评论数要加1
+                post.comment_nums += 1
+                await self.application.objects.update(post)
+                re_data["id"] = post_comment.id
+                # 这里这样处理，是剔除掉User中的datetime类型，这样序列化的时候就不会报错了
+                re_data["user"] = {}
+                re_data["user"]["nick_name"] = self.current_user.nick_name
+                re_data["user"]["id"] = self.current_user.id
+            except Post.DoesNotExist as e:
+                self.set_status(404)
+        else:
+            self.set_status(400)
+            for field in form.errors:
+                re_data[field] = form.errors[field][0]
+        self.finish(re_data)
+
+
+class CommentReplyHandler(BaseHandler):
+    @authenticated_async
+    async def get(self, comment_id, *args, **kwargs):
+        re_data = []
+        # 获取某一条评论的所有回复
+        comment_replys = await self.application.objects.execute(
+            PostComment.extend().where(PostComment.parent_comment_id == int(comment_id)))
+        # 遍历所有的评论回复返回前端需要的json数据
+        for item in comment_replys:
+            item_dict = {
+                "user": model_to_dict(item.user),
+                "content": item.content,
+                "reply_nums": item.reply_nums,
+                "add_time": item.add_time.strftime("%Y-%m-%d"),
+                "id": item.id
+            }
+            re_data.append(item_dict)
+        self.finish(json.dumps(re_data, default=json_serial))
+
+    @authenticated_async
+    async def post(self, comment_id, *args, **kwargs):
+        re_data = {}
+        # 1、校验评论回复表单
+        params = self.request.body.decode("utf8")
+        params = json.loads(params)
+        form = CommentReplyForm.from_json(params)
+        if form.validate():
+
+            try:
+                # 1、找到comment实体,帖子实体
+                comment = await self.application.objects.get(PostComment, id=int(comment_id))
+                post = await self.application.objects.get(Post, id=comment.post_id)
+                # 2、找出回复的目标用户
+                reply_user = await self.application.objects.get(User, id=int(form.replyed_user.data))
+                # 3、创建评论回复的记录
+                reply = await self.application.objects.create(PostComment, user=self.current_user, post=post,
+                                                              parent_comment=comment, reply_user=reply_user,
+                                                              content=form.content.data)
+                # 4、更新coment的回复数
+                comment.reply_nums += 1
+                await self.application.objects.update(comment)
+
+                re_data["id"] = reply.id
+                re_data["user"] = {
+                    "id": self.current_user.id,
+                    "nick_name": self.current_user.nick_name
+                }
+
+            except PostComment.DoesNotExist:
+                self.set_status(404)
+            except User.DoesNotExist as e:
+                self.set_status(400)
+                re_data["replyed_user"] = "用户不存在"
+        else:
+            self.set_status(400)
+            for field in form.errors:
+                re_data[field] = form.errors[field][0]
+        self.finish(re_data)

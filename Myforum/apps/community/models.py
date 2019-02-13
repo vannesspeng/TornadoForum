@@ -4,7 +4,7 @@
 # datetime:2018/12/28 15:30
 from datetime import datetime
 
-from peewee import ForeignKeyField, CharField, TextField, IntegerField, DateTimeField, BooleanField
+from peewee import ForeignKeyField, CharField, TextField, IntegerField, DateTimeField, BooleanField, JOIN
 
 from Myforum.Forum.models import BaseModel
 from Myforum.apps.users.models import User

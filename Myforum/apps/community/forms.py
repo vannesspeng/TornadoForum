@@ -2,8 +2,8 @@
 # -*- coding:utf-8 -*-
 # author:pyy
 # datetime:2019/1/9 15:20
-from wtforms import StringField, TextAreaField
-from wtforms.validators import DataRequired, AnyOf
+from wtforms import StringField, TextAreaField, IntegerField
+from wtforms.validators import DataRequired, AnyOf, Length
 from wtforms_tornado import Form
 
 
@@ -17,6 +17,16 @@ class CommunityGroupForm(Form):
 class GroupApplyForm(Form):
     apply_reason = StringField("申请理由", validators=[DataRequired("请输入申请理由")])
 
+
 class PostForm(Form):
     title = StringField("标题", validators=[DataRequired("请输入标题")])
     content = StringField("内容", validators=[DataRequired("请输入内容")])
+
+
+class PostComentForm(Form):
+    content = StringField("内容", validators=[DataRequired("请输入评论内容"), Length(min=5, message="评论内容不能少于5个字")])
+
+class CommentReplyForm(Form):
+    replyed_user = IntegerField("回复用户", validators=[DataRequired("请输入回复用户")])
+    content = StringField("内容", validators=[DataRequired("请输入评论内容"),
+                                            Length(min=5, message="内容不能少于5个字符")])
