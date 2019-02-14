@@ -5,7 +5,7 @@
 from tornado.web import url
 
 from Myforum.apps.community.handlers import GroupHandler, GroupMemberHandler, GroupDetailHanlder, PostHandler, \
-    PostDetailHandler, PostCommentHanlder, CommentReplyHandler
+    PostDetailHandler, PostCommentHanlder, CommentReplyHandler, CommentsLikeHanlder
 
 urlpattern = (
     url("/groups/", GroupHandler),
@@ -15,4 +15,5 @@ urlpattern = (
     url("/posts/([0-9]+)/", PostDetailHandler),
     url("/posts/([0-9]+)/comments/", PostCommentHanlder),
     url("/comments/([0-9]+)/replys/", CommentReplyHandler),
+    url("/comments/([0-9]+)/likes/", CommentsLikeHanlder)
 )

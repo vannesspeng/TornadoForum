@@ -352,3 +352,22 @@ class CommentReplyHandler(BaseHandler):
             for field in form.errors:
                 re_data[field] = form.errors[field][0]
         self.finish(re_data)
+
+
+class CommentsLikeHanlder(BaseHandler):
+    @authenticated_async
+    async def post(self, comment_id, *args, **kwargs):
+        re_data = {}
+        # 查询对应的comment
+        try:
+            comment = await self.application.objects.get(PostComment, id=int(comment_id))
+            # 创建一条点赞记录
+            comment_like = await self.application.objects.create(CommentLike, user=self.current_user,
+                                                                 post_comment=comment)
+            # 更新评论的点赞数量
+            comment.like_nums += 1
+            await self.application.objects.update(comment)
+            re_data["id"] = comment_like.id
+        except PostComment.DoesNotExist as e:
+            self.set_status(404)
+        self.finish(re_data)
