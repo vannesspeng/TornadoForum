@@ -79,3 +79,21 @@ class QuestionHandler(BaseHandler):
             for field in question_form.errors:
                 re_data[field] = question_form.errors[field][0]
         self.finish(re_data)
+
+class QuestionDetailHandler(BaseHandler):
+    async def get(self, question_id, *args, **kwargs):
+        re_data = {}
+        # 获取对应question对象
+        question_details = await self.application.objects.execute(Question.extend().where(Question.id==int(question_id)))
+        re_count = 0
+        for data in question_details:
+            item_dict = model_to_dict(data)
+            item_dict["image"] = "{}/media/{}/".format(self.settings["SITE_URL"], item_dict["image"])
+            item_dict["add_time"] = item_dict["add_time"].strftime("%Y-%m-%d %H:%M:%S")
+            re_data = item_dict
+            re_count += 1
+
+        if re_count == 0:
+            self.set_status(404)
+        self.finish(json.dumps(re_data, default=json_serial))
+
