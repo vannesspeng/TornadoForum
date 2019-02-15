@@ -10,8 +10,9 @@ import aiofiles
 from playhouse.shortcuts import model_to_dict
 
 from Myforum.Forum.handlers import BaseHandler
-from Myforum.apps.question.forms import QuestionForm
-from Myforum.apps.question.models import Question
+from Myforum.apps.question.forms import QuestionForm, AnswerForm, AnswerReplyForm
+from Myforum.apps.question.models import Question, Answer
+from Myforum.apps.users.models import User
 from Myforum.apps.utils.decorators import authenticated_async
 from Myforum.apps.utils.util_func import json_serial
 
@@ -97,3 +98,109 @@ class QuestionDetailHandler(BaseHandler):
             self.set_status(404)
         self.finish(json.dumps(re_data, default=json_serial))
 
+class AnswerHanlder(BaseHandler):
+    async def get(self, question_id, *args, **kwargs):
+        # 获取问题的的所有回答
+        re_data = []
+
+        try:
+            question = await self.application.objects.get(Question, id=int(question_id))
+            answsers = await self.application.objects.execute(
+                Answer.extend().where(Answer.question == question, Answer.parent_answer.is_null(True)).order_by(
+                    Answer.add_time.desc())
+            )
+
+            for item in answsers:
+                item_dict = {
+                    "user": model_to_dict(item.user),
+                    "content": item.content,
+                    "reply_nums": item.reply_nums,
+                    "id": item.id,
+                }
+
+                re_data.append(item_dict)
+        except Question.DoesNotExist as e:
+            self.set_status(404)
+        self.finish(json.dumps(re_data, default=json_serial))
+
+    @authenticated_async
+    async def post(self, question_id, *args, **kwargs):
+        # 新增评论
+        re_data = {}
+        param = self.request.body.decode("utf8")
+        param = json.loads(param)
+        form = AnswerForm.from_json(param)
+        if form.validate():
+            try:
+                question = await self.application.objects.get(Question, id=int(question_id))
+                answer = await self.application.objects.create(Answer, user=self.current_user, question=question,
+                                                               content=form.content.data)
+                question.answer_nums += 1
+                await self.application.objects.update(question)
+                re_data["id"] = answer.id
+                re_data["user"] = {
+                    "nick_name": self.current_user.nick_name,
+                    "id": self.current_user.id
+                }
+            except Question.DoesNotExist as e:
+                self.set_status(404)
+        else:
+            self.set_status(400)
+            for field in form.errors:
+                re_data[field] = form.errors[field][0]
+
+        self.finish(re_data)
+
+class AnswerReplyHandler(BaseHandler):
+    @authenticated_async
+    async def get(self, answer_id, *args, **kwargs):
+        re_data = []
+        answer_replys = await self.application.objects.execute(
+            Answer.extend().where(Answer.parent_answer_id == int(answer_id)))
+
+        for item in answer_replys:
+            item_dict = {
+                "user": model_to_dict(item.user),
+                "content": item.content,
+                "reply_nums": item.reply_nums,
+                "add_time": item.add_time.strftime("%Y-%m-%d"),
+                "id": item.id
+            }
+            re_data.append(item_dict)
+
+        self.finish(json.dumps(re_data, default=json_serial))
+
+    @authenticated_async
+    async def post(self, answer_id, *args, **kwargs):
+        # 添加回复
+        re_data = {}
+        param = self.request.body.decode("utf8")
+        param = json.loads(param)
+        form = AnswerReplyForm.from_json(param)
+        if form.validate():
+            try:
+                answer = await self.application.objects.get(Answer, id=int(answer_id))
+                replyed_user = await self.application.objects.get(User, id=form.replyed_user.data)
+                question = await self.application.objects.get(Question, id=int(answer.question_id))
+                reply = await self.application.objects.create(Answer, user=self.current_user, question=question,parent_answer=answer,
+                                                              reply_user=replyed_user, content=form.content.data)
+                # 修改comment的回复数
+                answer.reply_nums += 1
+                await self.application.objects.update(answer)
+
+                re_data["id"] = reply.id
+                re_data["user"] = {
+                    "id": self.current_user.id,
+                    "nick_name": self.current_user.nick_name
+                }
+            except Answer.DoesNotExist as e:
+                self.set_status(404)
+            except User.DoesNotExist as e:
+                self.set_status(400)
+                re_data["replyed_user"] = "用户不存在"
+        else:
+            self.set_status(400)
+            for field in form.errors:
+                re_data[field] = form.errors[field][0]
+
+        self.finish(re_data)

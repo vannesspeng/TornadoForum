@@ -41,8 +41,17 @@ def get_question():
     print(res.status_code)
     print(json.loads(res.text))
 
+def add_answer(question_id):
+    data = {
+        "content": "不可以，xadmin是django框架使用的"
+    }
+    res = requests.post("{}/questions/{}/answers/".format(web_site_url, question_id), headers=headers, json=data)
+    print(res.status_code)
+    print(json.loads(res.text))
+
 if __name__ == "__main__":
 
     # 新建问题
     # new_question()
-    get_question()
+    # get_question()
+    add_answer(2)
