@@ -3,17 +3,22 @@
 # author:pyy
 # datetime:2018/12/29 10:33
 import json
+import os
+import uuid
 from datetime import datetime
 from random import choices
 
+import aiofiles
 import jwt
 from tornado.web import RequestHandler
 
 from Myforum.Forum.handlers import RedisHandler, BaseHandler
 from Myforum.Forum.settings import settings
-from Myforum.apps.users.forms import SmsCodeForm, RegisterForm, LoginForm
+from Myforum.apps.users.forms import SmsCodeForm, RegisterForm, LoginForm, ChangeInfoForm, ChangePwdForm
 from Myforum.apps.users.models import User
 from Myforum.apps.utils.AsyncYunPian import AsyncYunPian
+from Myforum.apps.utils.decorators import authenticated_async
+
 
 class LoginHandler(BaseHandler):
     async def post(self, *args, **kwargs):
@@ -142,3 +147,91 @@ class SmsHandler(RedisHandler):
             for field in sms_form.errors:
                 re_data[field] = sms_form.errors[field][0]
         self.finish(re_data)
+
+
+class InfoHandler(BaseHandler):
+    @authenticated_async
+    async def get(self, *args, **kwargs):
+        re_data = {
+            "mobile": self.current_user.mobile,
+            "nick_name": self.current_user.nick_name,
+            "gender": self.current_user.gender,
+            "desc": self.current_user.desc,
+            "address": self.current_user.address,
+            "id": self.current_user.id
+        }
+        self.finish(re_data)
+
+    @authenticated_async
+    async def patch(self, *args, **kwargs):
+        re_data = {}
+        # 获取post请求参数
+        param = self.request.body.decode("utf-8")
+        param = json.loads(param)
+        form = ChangeInfoForm.from_json(param)
+        if form.validate():
+            self.current_user.nick_name = form.nick_name.data
+            self.current_user.gender = form.gender.data
+            self.current_user.address = form.address.data
+            self.current_user.desc = form.desc.data
+            res = await self.application.objects.update(self.current_user)
+        else:
+            self.set_status(400)
+            for field in form.errors:
+                re_data[field] = form.errors[field][0]
+        self.finish(re_data)
+
+
+class HeadImageHandler(BaseHandler):
+    @authenticated_async
+    async def post(self, *args, **kwargs):
+        re_data = {}
+        # 获取图片文件
+        files_meta = self.request.files.get("image", None)
+        new_filename = ""
+        if not files_meta:
+            self.set_status(400)
+            re_data["image"] = "请上传图片"
+        else:
+            # 保存上传图片
+            for meta in files_meta:
+                # 获取原文件名，生成新的文件名，并将保存的图片文件的完整路径存入到数据库
+                file_name = meta["filename"]
+                new_filename = "{uuid}_{filename}".format(uuid=uuid.uuid1(), filename=file_name)
+                file_path = os.path.join(settings['MEDIA_ROOT'], new_filename)
+                async with aiofiles.open(file_path, 'wb') as f:
+                    await f.write(meta['body'])
+            # 变更当前用户头像图片的url
+            self.current_user.head_url = new_filename
+            await self.application.objects.update(self.current_user)
+            re_data["image"] = "/media/" + new_filename
+        self.finish(re_data)
+
+
+class PasswordHandler(BaseHandler):
+    @authenticated_async
+    async def post(self, *args, **kwargs):
+        re_data = {}
+        param = self.request.body.decode("utf-8")
+        param = json.loads(param)
+        change_pwd_form = ChangePwdForm.from_json(param)
+        if change_pwd_form.validate():
+            # 比对旧密码是否正确
+            if not self.current_user.password.check_password(change_pwd_form.old_psw.data):
+                self.set_status(400)
+                re_data["old_password"] = "旧密码错误"
+            # 比对新密码与新密码确认是否相同
+            else:
+                if change_pwd_form.new_psw.data != change_pwd_form.confirm_psw.data:
+                    self.set_status(400)
+                    re_data["new_password"] = "新密码两次输入不一致"
+                else:
+                    # 说明旧密码输入正确，新密码输入无误
+                    self.current_user.password = change_pwd_form.confirm_psw.data
+                    res = await self.application.objects.update(self.current_user)
+        else:
+            self.set_status(400)
+            for field in change_pwd_form.errors:
+                re_data[field] = change_pwd_form.errors[field][0]
+        self.finish(re_data)
+
