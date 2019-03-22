@@ -5,7 +5,7 @@
 from tornado.web import url
 
 from Myforum.apps.users.handlers import SmsHandler, RegisterHandler, LoginHandler, InfoHandler, HeadImageHandler, \
-    PasswordHandler
+    PasswordHandler, UserGroupHanlder, UserQuestionHanlder, UserAnswerHanlder
 
 urlpattern = (
     url("/code/", SmsHandler),
@@ -13,5 +13,8 @@ urlpattern = (
     url("/login/", LoginHandler),
     url("/info/", InfoHandler),
     url("/headimages/", HeadImageHandler),
-    url("/password/", PasswordHandler)
+    url("/password/", PasswordHandler),
+    url("/users/([0-9]+)/groups/", UserGroupHanlder),
+    url("/users/([0-9]+)/questions/", UserQuestionHanlder),
+    url("/users/([0-9]+)/answers/", UserAnswerHanlder)
 )

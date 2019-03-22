@@ -28,6 +28,12 @@ def test_register():
 
     print(json.loads(res.text))
 
+
+def test_getgroup():
+    url = "{}/users/7/groups/".format(web_url)
+    res = requests.get(url)
+    print(json.loads(res.text))
+
 if __name__ == "__main__":
     # test_sms()
-    test_register()
+    test_getgroup()

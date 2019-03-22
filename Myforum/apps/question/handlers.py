@@ -10,6 +10,7 @@ import aiofiles
 from playhouse.shortcuts import model_to_dict
 
 from Myforum.Forum.handlers import BaseHandler
+from Myforum.apps.messages.models import Message
 from Myforum.apps.question.forms import QuestionForm, AnswerForm, AnswerReplyForm
 from Myforum.apps.question.models import Question, Answer
 from Myforum.apps.users.models import User
@@ -38,9 +39,12 @@ class QuestionHandler(BaseHandler):
 
         questions = await self.application.objects.execute(question_query)
         for question in questions:
+            # 获取提问者的图像信息
+            user = await self.application.objects.get(User, id=question.user_id)
             question_dict = model_to_dict(question)
             question_dict["image"] = "{}/media/{}/".format(self.settings["SITE_URL"], question_dict["image"])
             question_dict["add_time"] = question_dict["add_time"].strftime("%Y-%m-%d %H:%M:%S")
+            question_dict["user_header_url"] = self.settings["LOCALHOST_URL"]+ "/media/" + user.head_url
             re_data.append(question_dict)
 
         self.finish(json.dumps(re_data, default=json_serial))
@@ -87,13 +91,14 @@ class QuestionDetailHandler(BaseHandler):
         # 获取对应question对象
         question_details = await self.application.objects.execute(Question.extend().where(Question.id==int(question_id)))
         re_count = 0
-        for data in question_details:
-            item_dict = model_to_dict(data)
+        for item in question_details:
+            user = await self.application.objects.get(User, id=item.user_id)
+            item_dict = model_to_dict(item)
+            item_dict["user_header_url"] = "{}/media/{}".format(self.settings["LOCALHOST_URL"], user.head_url)
             item_dict["image"] = "{}/media/{}/".format(self.settings["SITE_URL"], item_dict["image"])
             item_dict["add_time"] = item_dict["add_time"].strftime("%Y-%m-%d %H:%M:%S")
             re_data = item_dict
             re_count += 1
-
         if re_count == 0:
             self.set_status(404)
         self.finish(json.dumps(re_data, default=json_serial))
@@ -117,7 +122,7 @@ class AnswerHanlder(BaseHandler):
                     "reply_nums": item.reply_nums,
                     "id": item.id,
                 }
-
+                item_dict["user"]["head_url"] = "{}/media/{}".format(self.settings["LOCALHOST_URL"], item_dict["user"]["head_url"])
                 re_data.append(item_dict)
         except Question.DoesNotExist as e:
             self.set_status(404)
@@ -125,7 +130,7 @@ class AnswerHanlder(BaseHandler):
 
     @authenticated_async
     async def post(self, question_id, *args, **kwargs):
-        # 新增评论
+        # 新增回答
         re_data = {}
         param = self.request.body.decode("utf8")
         param = json.loads(param)
@@ -142,6 +147,13 @@ class AnswerHanlder(BaseHandler):
                     "nick_name": self.current_user.nick_name,
                     "id": self.current_user.id
                 }
+                receiver = await self.application.objects.get(User, id=question.user_id)
+                await self.application.objects.create(Message, sender=self.current_user,
+                                                      receiver=receiver,
+                                                      message_type=4,
+                                                      message=form.content.data,
+                                                      parent_content=question.content
+                                                      )
             except Question.DoesNotExist as e:
                 self.set_status(404)
         else:
@@ -166,6 +178,8 @@ class AnswerReplyHandler(BaseHandler):
                 "add_time": item.add_time.strftime("%Y-%m-%d"),
                 "id": item.id
             }
+            item_dict["user"]["head_url"] = "{}/media/{}".format(self.settings["LOCALHOST_URL"],
+                                                                 item_dict["user"]["head_url"])
             re_data.append(item_dict)
 
         self.finish(json.dumps(re_data, default=json_serial))
@@ -193,6 +207,13 @@ class AnswerReplyHandler(BaseHandler):
                     "id": self.current_user.id,
                     "nick_name": self.current_user.nick_name
                 }
+
+                await self.application.objects.create(Message, sender=self.current_user,
+                                                      receiver=replyed_user,
+                                                      message_type=5,
+                                                      message=form.content.data,
+                                                      parent_content=answer.content
+                                                      )
             except Answer.DoesNotExist as e:
                 self.set_status(404)
             except User.DoesNotExist as e:

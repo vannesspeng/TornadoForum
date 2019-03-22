@@ -36,7 +36,10 @@ class Answer(BaseModel):
         # 2. 多字段映射同一个model
         answer_author = User.alias()
         question_user = User.alias()
-        return cls.select(cls, Question, answer_author.id, answer_author.nick_name, question_user.id, question_user.nick_name).join(
-            Question, join_type=JOIN.LEFT_OUTER, on=cls.question).switch(cls).join(question_user, join_type=JOIN.LEFT_OUTER,
-            on=cls.user).switch(cls).join(answer_author, join_type=JOIN.LEFT_OUTER, on=cls.reply_user
+        return cls.select(cls, Question, answer_author.id, answer_author.nick_name, answer_author.head_url,
+                          question_user.id, question_user.nick_name, question_user.head_url).join(
+            Question, join_type=JOIN.LEFT_OUTER, on=cls.question).switch(cls).join(question_user,
+                                                                                   join_type=JOIN.LEFT_OUTER,
+                                                                                   on=cls.user).switch(cls).join(
+            answer_author, join_type=JOIN.LEFT_OUTER, on=cls.reply_user
         )

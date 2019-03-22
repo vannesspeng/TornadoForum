@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 # author:pyy
 # datetime:2018/12/28 15:30
 from datetime import datetime
@@ -21,7 +21,7 @@ class CommunityGroup(BaseModel):
     desc = TextField(verbose_name="简介")
     notice = TextField(verbose_name="公告")
 
-    #小组的信息
+    # 小组的信息
     member_nums = IntegerField(default=0, verbose_name="成员数")
     post_nums = IntegerField(default=0, verbose_name="帖子数")
 
@@ -29,13 +29,16 @@ class CommunityGroup(BaseModel):
     def extend(cls):
         return cls.select(cls, User.id, User.nick_name).join(User)
 
+
 HANDLE_STATUS = (
     ("agree", "同意"),
     ("refuse", "拒绝")
 )
+
+
 class CommunityGroupMember(BaseModel):
     """
-    小组成员
+    小组会员申请
     """
     user = ForeignKeyField(User, verbose_name="用户")
     community = ForeignKeyField(CommunityGroup, verbose_name="社区")
@@ -43,6 +46,11 @@ class CommunityGroupMember(BaseModel):
     handle_msg = CharField(max_length=200, null=True, verbose_name="处理内容")
     apply_reason = CharField(max_length=200, verbose_name="申请理由")
     handle_time = DateTimeField(default=datetime.now(), verbose_name="加入时间")
+
+    @classmethod
+    def extend(cls):
+        return cls.select(cls, User, CommunityGroup).join(User).switch(cls).join(CommunityGroup)
+
 
 class Post(BaseModel):
     user = ForeignKeyField(User, verbose_name="用户")
@@ -57,7 +65,8 @@ class Post(BaseModel):
 
     @classmethod
     def extend(cls):
-        return cls.select(cls, User.id, User.nick_name).join(User)
+        return cls.select(cls, User.id, User.nick_name, User.head_url).join(User)
+
 
 class PostComment(BaseModel):
     # 评论和回复
@@ -71,15 +80,13 @@ class PostComment(BaseModel):
 
     @classmethod
     def extend(cls):
-        #1. 多表join
-        #2. 多字段映射同一个model
+        # 1. 多表join
+        # 2. 多字段映射同一个model
         author = User.alias()
         relyed_user = User.alias()
-        return cls.select(cls, Post, relyed_user.id, relyed_user.nick_name, author.id, author.nick_name).join(
-            Post, join_type=JOIN.LEFT_OUTER, on=cls.post).switch(cls).join(author, join_type=JOIN.LEFT_OUTER, on=cls.user).switch(cls).join(
-            relyed_user, join_type=JOIN.LEFT_OUTER, on=cls.reply_user
-        )
-
+        return cls.select(cls, Post, relyed_user.id, relyed_user.nick_name, relyed_user.head_url, author.id,
+                          author.nick_name, author.head_url).join(Post, join_type=JOIN.LEFT_OUTER, on=cls.post).switch(cls).join(author, join_type=JOIN.LEFT_OUTER,
+                          on=cls.user).switch(cls).join(relyed_user, join_type=JOIN.LEFT_OUTER, on=cls.reply_user)
 
 class CommentLike(BaseModel):
     # 评论点赞

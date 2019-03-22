@@ -25,7 +25,8 @@ settings = {
     },
     "redis": {
         "host": "127.0.0.1"
-    }
+    },
+    "LOCALHOST_URL": "http://127.0.0.1:8888"
 }
 
 database = peewee_async.MySQLDatabase(

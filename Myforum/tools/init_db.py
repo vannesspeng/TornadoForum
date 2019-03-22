@@ -5,6 +5,7 @@
 from peewee import MySQLDatabase
 
 from Myforum.apps.community.models import CommunityGroup, CommunityGroupMember, Post, PostComment, CommentLike
+from Myforum.apps.messages.models import Message
 from Myforum.apps.question.models import Question, Answer
 
 database = MySQLDatabase(
@@ -16,7 +17,8 @@ def init():
     #database.create_tables([User])
     #database.create_tables(([CommunityGroup, CommunityGroupMember]))
     #database.create_tables(([ Post, PostComment, CommentLike]))
-    database.create_tables(([Question, Answer]))
+    #database.create_tables(([Question, Answemessages_setr]))
+    database.create_tables(([Message]))
 
 
 if __name__ == "__main__":

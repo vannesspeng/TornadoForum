@@ -14,6 +14,8 @@ from tornado.web import RequestHandler
 
 from Myforum.Forum.handlers import RedisHandler, BaseHandler
 from Myforum.Forum.settings import settings
+from Myforum.apps.community.models import CommunityGroup, CommunityGroupMember
+from Myforum.apps.question.models import Question, Answer
 from Myforum.apps.users.forms import SmsCodeForm, RegisterForm, LoginForm, ChangeInfoForm, ChangePwdForm
 from Myforum.apps.users.models import User
 from Myforum.apps.utils.AsyncYunPian import AsyncYunPian
@@ -235,3 +237,73 @@ class PasswordHandler(BaseHandler):
                 re_data[field] = change_pwd_form.errors[field][0]
         self.finish(re_data)
 
+
+class UserGroupHanlder(BaseHandler):
+    @authenticated_async
+    async def get(self, user_id, *args, **kwargs):
+        re_data = []
+        # 获取到当前用户创建的group
+        try:
+            user = await self.application.objects.get(User, id=user_id)
+            user_dict = {
+                "nick_name": user.nick_name,
+                "head_url": "/media/" + user.head_url,
+            }
+            re_data.append({"user": user_dict})
+            create_groups = await self.application.objects.execute(CommunityGroup.select().where(CommunityGroup.creator_id == user_id))
+            create_group = []
+            for group in create_groups:
+                create_group.append({
+                    "group_id": group.id,
+                    "front_image": group.front_image,
+                    "name": group.name,
+                    "desc": group.desc
+                })
+            re_data.append({"owner": create_group})
+            join_group_members = await self.application.objects.execute(CommunityGroupMember.select().where(CommunityGroupMember.user_id == user_id, CommunityGroupMember.status == "agree"))
+            join_group_ids = []
+            for group_member in join_group_members:
+                join_group_ids.append(group_member.community_id)
+            join_groups = await self.application.objects.execute(
+                CommunityGroup.select().where(CommunityGroup.id.in_(join_group_ids)))
+            join_group = []
+            for group in join_groups:
+                join_group.append({
+                    "group_id": group.id,
+                    "front_image": group.front_image,
+                    "name": group.name,
+                    "desc": group.desc
+                })
+            re_data.append({"join": join_group})
+        except User.DoesNotExist as e:
+            self.set_status(400)
+        self.finish(json.dumps(re_data))
+
+class UserQuestionHanlder(BaseHandler):
+    @authenticated_async
+    async def get(self, user_id, *args, **kwargs):
+        re_data = []
+        # 获取到当前用户创建的question
+        questions = await self.application.objects.execute(Question.select().where(Question.user_id == user_id))
+        for question in questions:
+            re_data.append({
+                "question_id": question.id,
+                "content": question.content,
+                "add_time": question.add_time.strftime("%Y-%m-%d %H:%M:%S")
+            })
+        self.finish(json.dumps(re_data))
+
+
+class UserAnswerHanlder(BaseHandler):
+    @authenticated_async
+    async def get(self, user_id, *args, **kwargs):
+        re_data = []
+        # 获取到当前用户创建的question
+        answers = await self.application.objects.execute(Answer.select().where(Answer.user_id == user_id))
+        for answer in answers:
+            re_data.append({
+                "question_id":answer.question_id,
+                "content": answer.content,
+                "add_time": answer.add_time.strftime("%Y-%m-%d %H:%M:%S")
+            })
+        self.finish(json.dumps(re_data))

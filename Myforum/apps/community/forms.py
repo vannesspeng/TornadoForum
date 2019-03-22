@@ -26,7 +26,13 @@ class PostForm(Form):
 class PostComentForm(Form):
     content = StringField("内容", validators=[DataRequired("请输入评论内容"), Length(min=5, message="评论内容不能少于5个字")])
 
+
 class CommentReplyForm(Form):
     replyed_user = IntegerField("回复用户", validators=[DataRequired("请输入回复用户")])
     content = StringField("内容", validators=[DataRequired("请输入评论内容"),
                                             Length(min=5, message="内容不能少于5个字符")])
+
+
+class HandlerApplyForm(Form):
+    status = StringField("处理结果", validators=[AnyOf(values=["agree", "refuse"], message="处理结果只能为agree或者refuse")])
+    handle_msg = StringField("拒绝理由")
