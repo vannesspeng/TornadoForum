@@ -105,10 +105,10 @@ let webUrls = {
         '/css/style_new.css',
         '/css/_header_footer.css',
         '/css/iconfont.css'],
-    thisPost:['../../css/common_new.css','../../css/basic_new.css','../../css/style.css','' +
-    '../../css/style_new.css',
-        '../../css/wenda.css','../../css/_header_footer.css',
-        '../../css/iconfont.css'],
+    thisPost:['/css/common_new.css','/css/basic_new.css','/css/style.css','' +
+    '/css/style_new.css',
+        '/css/wenda.css','/css/_header_footer.css',
+        '/css/iconfont.css'],
 
     changeMyInfo:[
         '/css/rest.css',
@@ -127,6 +127,7 @@ let webUrls = {
         "/css/style_new.css",
         "/css/_header_footer.css",
         "/css/iconfont.css",
+        '/css/group.css',
         '/css/wenda.css'],
     myMsg:["/css/common_new.css",
         "/css/rest.css",
@@ -165,12 +166,12 @@ let webUrls = {
         "/css/_header_footer.css",
         "/css/iconfont.css"],
 
-    questionsList:["../../css/rest.css",
+    questionsList:["/css/rest.css",
         "/css/iconfont.css",
         "/css/common.css",
         "/css/index.css",
         "/css/style.css",
-        "/css/box.css","../../css/wenda1.css"],
+        "/css/box.css","/css/wenda1.css"],
 
     userAnswers:["../css/common_new.css",
         "/css/basic_new.css",
@@ -191,7 +192,7 @@ let webUrls = {
         "/css/common.css",
         "/css/_header_footer.css",
         "/css/iconfont.css"],
-    postList:["../../css/common_new.css",
+    postList:["/css/common_new.css",
         "/css/basic_new.css",
         "/css/style.css",
         "/css/style_new.css",
@@ -200,7 +201,7 @@ let webUrls = {
 };
 let name = document.querySelector('#webname');
 let zhiling = name.getAttribute('title');
-let baseUrl = "http://vue.projectsedu.com:8009/static";
+let baseUrl = "http://127.0.0.1:80";
 let linkurls = webUrls[zhiling];
 let scripturls = webUrls[zhiling][1];
 
@@ -208,7 +209,7 @@ for(let i = 0; i < linkurls.length; i++){
     let header = document.querySelector('head');
     let link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href =baseUrl + linkurls[i]+'?uid='+ __WEBPACK_IMPORTED_MODULE_0__global__["a" /* default */]['global'];
+    link.href =baseUrl + linkurls[i];
     header.appendChild(link)
 }
 

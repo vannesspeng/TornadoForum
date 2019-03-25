@@ -29,14 +29,11 @@ let vm = new Vue({
         notLogin(){
             return store.state.notLogin
         },
-        questionId(){
-            return store.state.groupId
-        }
     },
     created(){
         this.getQuestionId();
         this.showname();
-        this.getQuestions();
+        this.getQuestion();
         this.getanswer();
     },
     methods:{
@@ -66,16 +63,11 @@ let vm = new Vue({
         showname(){
             return store.commit('showname')
         },
-        getQuestions:function () {
+        getQuestion:function () {
             const that = this;
-            axios.get("questions/",{
-                params : {
-                    "o": "new",
-                    "c": "技术问答",
-                }
-            })
+            axios.get("/questions/" + this.questionId + "/",{})
                 .then(function(response){
-                    that.questions = response.data[0]
+                    that.questions = response.data
                 })
                 .catch(function(err){
                     console.log(err);
@@ -102,7 +94,7 @@ let vm = new Vue({
                 "content":that.content
             },{
                 headers:{
-                    "tsessionid": store.state.tesessionid,
+                    "tsessionid": store.state.tesssionid,
                 }
             }).then((req)=>{
                 that.getanswer();
@@ -112,25 +104,27 @@ let vm = new Vue({
             })
         },
         //需要选择被评论人和answers的id
-        addreply(answerId){
+        addreply(answerId, userId){
             let that = this;
             axios.post('answers/'+answerId+'/replys/',{
-                "replyed_user":that.replyeduser,
+                "replyed_user":userId,
                 "content":this.replyContent
             },{
                 headers:{
-                    "tsessionid": store.state.tesessionid,
+                    "tsessionid": store.state.tesssionid,
                 }
             }).then((req)=>{
                 console.log(req.data);
                 that.replyContent = ''
+                that.getreply(answerId)
             })
+
         },
         getreply(id){
             let that = this;
             axios.get('/answers/'+id+'/replys/',{
                 headers:{
-                    "tsessionid": store.state.tesessionid,
+                    "tsessionid": store.state.tesssionid,
                 }
             }).then((req)=>{
                 that.replies = req.data;

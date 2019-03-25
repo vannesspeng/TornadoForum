@@ -84,7 +84,7 @@
                     <dl>
                         <dd><span class="icon-pl"></span>{{thisPost.comment_nums}}</dd>
                         <dt>
-                            <a href="../usersCenter/userAnswers.html"><img src="../../images/original_100_100.jpg" class="lazyloading">{{thisPost.user.nick_name}} </a><span> {{thisPost.add_time}}</span></dt>
+                            <a href="#"><img src="{{thisPost.user.head_url}}" class="lazyloading">{{thisPost.user.nick_name}} </a><span> {{thisPost.add_time}}</span></dt>
                     </dl>
                     <div class="question-page">
                         <p v-html="thisPost.content" style=" white-space: normal; font-size: 14px; font-family: 微软雅黑, 宋体;">
@@ -100,7 +100,7 @@
                     <div class="qa-comment-wrap" v-if="thiscomment.length" v-for="item in thiscomment">
                         <div class="qa-comment-author">
                             <a title="da_ge_da" target="_blank" href="../usersCenter/userAnswers.html">
-                                <img width="40" height="40" src="../../images/middle.jpg" >
+                                <img width="40" height="40" src="{{item.user.head_url}}" >
                                 <span class="qa-comment-nick">{{item.user.nick_name}}</span>
                             </a>
                         </div>

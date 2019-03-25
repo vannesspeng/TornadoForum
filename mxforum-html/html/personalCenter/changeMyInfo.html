@@ -2,9 +2,9 @@
 <!-- saved from url=(0046)http://localhost:63342/untitled1/product0606/content/personalCenter/set/set.html?_ijt=pe4g09rpu0ca0vo65v123a68eg -->
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
-    <title>Eduline — Eduline在线教育平台|在线网校系统|在线教育系统|在线教育解决方案|在线教育系统|在线学习系统|在线培训系统</title>
-    <meta content="在线教育，教育系统，在线教育系统，在线教育平台，在线教育网站，在线教育解决方案，网络教学系统，直播系统，点播系统，录播系统，在线约课，在线考试，在线题库，题库系统，在线教育app，在线网校系统，网校系统，培训系统，企业培训系统，企业内训系统，在线培训系统，在线教育系统，在线学习系统，慕课系统，教育系统源码，教育源码，教育源码" name="keywords">
-    <meta content="Eduline多机构在线教育交易平台" name="description">
+    <title>Python技术论坛</title>
+    <meta content="Python技术论坛" name="keywords">
+    <meta content="Python技术论坛" name="description">
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -121,13 +121,13 @@
                         <form class="infobox">
                             <dl>
                                 <dt><span>*</span>登录账号：</dt>
-                                <dd>18227618966                            </dd>
+                                <dd>{{userInfo.mobile}}                            </dd>
                             </dl>
                             <dl>
                                 <dt><span>*</span>性别：</dt>
                                 <dd>
-                                    <label><input type="radio" name="sex" value="1" v-model="userInfo.gender">男</label>
-                                    <label><input type="radio" name="sex" value="2"v-model="userInfo.gender">女</label>
+                                    <label><input @click="getRadioVal" type="radio" name="sex" value="1" v-model="userInfo.gender">男</label>
+                                    <label><input @click="getRadioVal" type="radio" name="sex" value="0"v-model="userInfo.gender">女</label>
                                 </dd>
                             </dl>
                             <dl>
@@ -261,31 +261,43 @@
                 <li class="center_right " v-if="showPsd">
                 <!-- 修改密码 -->
                 <div class="center_right_con Manage_all">
+                    <validator name="myForm">
                     <form class="infobox">
                         <dl>
                             <dt><span>*</span>旧密码：</dt>
                             <dd>
-                                <input class="inp01" type="password" rel="请输入原密码" name="oldpassword">
+                                <input class="inp01" name="oldpsw" v-model="oldpsw" detect-change="off"
+            detect-blur='on' initial='off' autocomplete="off" v-validate:oldpsw="{minlength:6,maxlength:20}" type="password" placeholder="请输入原密码">
+                                <span class="marpwd" v-if="$myForm.oldpsw.minlength">请输入6-20位的密码</span>
+                                <span class="marpwd" v-if="$myForm.oldpsw.maxlength">请输入6-20位的密码</span>
                             </dd>
                         </dl>
                         <dl>
                             <dt><span>*</span>新密码：</dt>
                             <dd>
-                                <input class="inp01" type="password" rel="请输入新密码" name="password">
+                                <input class="inp01" name="newpsw" v-model="newpsw" detect-change="off"
+            detect-blur='on' initial='off' autocomplete="off" v-validate:newpsw="{minlength:6,maxlength:20}" type="password" placeholder="请输入原密码">
+                                <span class="marpwd" v-if="$myForm.newpsw.minlength">请输入6-20位的密码</span>
+                                <span class="marpwd" v-if="$myForm.newpsw.maxlength">请输入6-20位的密码</span>
                             </dd>
                         </dl>
                         <dl>
                             <dt><span>*</span>确认密码：</dt>
                             <dd>
-                                <input class="inp01" type="password" rel="请输入确认密码" name="repassword">
+                                <input class="inp01" name="confirmpsw" v-model="confirmpsw" detect-change="off"
+            detect-blur='on' initial='off' autocomplete="off" v-validate:confirmpsw="{minlength:6,maxlength:20}" type="password" placeholder="请输入原密码">
+                                <span class="marpwd" v-if="$myForm.confirmpsw.minlength">请输入6-20位的密码</span>
+                                <span class="marpwd" v-if="$myForm.confirmpsw.maxlength">请输入6-20位的密码</span>
                             </dd>
                         </dl>
                         <dl>
                             <dd>
-                                <a href="javascript:;" class="btn" id="edit-password" type="submit" style="height: 40px;line-height: 40px;">保存</a>
+                                <a href="javascript:;" @click="changePsw" class="btn" id="edit-password" style="height: 40px;line-height: 40px;">保存</a>
+
                             </dd>
                         </dl>
                     </form>
+                    </validator>
                 </div>
 
             </li>
@@ -302,7 +314,7 @@
     <div class="post-service yensen">
 
             <div class="copyright-box">
-                Copyright 2017 seition All Rights Reserved  |  蜀ICP 备 16004612号        </div>
+                Copyright 2019 seition All Rights Reserved        </div>
         </div>
 </div>
     <!--footer end-->

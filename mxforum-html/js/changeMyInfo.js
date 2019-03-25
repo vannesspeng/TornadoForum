@@ -14,7 +14,10 @@ let vm = new Vue({
         showImg:false,
         front_img:'',
         file:'',
-        image:'../../images/middle.jpg'
+        image:'../../images/middle.jpg',
+        oldpsw:'',
+        newpsw:'',
+        confirmpsw:''
     },
     computed:{
         user(){
@@ -33,9 +36,14 @@ let vm = new Vue({
         showname(){
             return store.commit('showname')
         },
+        getRadioVal(event){
+            let that = this;
+            that.userInfo.gender = event.target.value;
+            console.log(that.userInfo.gender)
+        }, 
         getInfo(){
             let that = this;
-            axios.get("/profiles/",{
+            axios.get("/info/",{
                 headers:{
                     "tsessionid": store.state.tesssionid,
                 }
@@ -44,23 +52,13 @@ let vm = new Vue({
                 if(that.userInfo.address === null){
                     that.userInfo.address = 'null'
                 }
-                if(that.userInfo.gender =='male'){
-                    that.userInfo.gender = '2'
-                }else {
-                    that.userInfo.gender = '1'
-                }
             }).catch((err)=>{
                 console.log(err)
             })
         },
         changeInfo(){
             let that = this;
-            if(that.userInfo.gender ==2){
-                that.userInfo.gender = 'female'
-            }else {
-                that.userInfo.gender = 'male'
-            }
-            axios.patch("/profiles/",{
+            axios.patch("/info/",{
                 "nick_name":that.userInfo.nick_name,
                 "gender":that.userInfo.gender,
                 "address":that.userInfo.address,
@@ -70,7 +68,8 @@ let vm = new Vue({
                     "tsessionid": store.state.tesssionid,
                 }
             }).then((res)=>{
-
+                console.log(res.data)
+                alert('个人信息保存成功！')
             }).catch((err)=>{
                 console.log(err)
             })
@@ -102,12 +101,31 @@ let vm = new Vue({
             axios.post("/headimages/",formData
             ,{
                     headers:{
-                        "tsessionid": store.state.tesessionid,
+                        "tsessionid": store.state.tesssionid,
                         "Content-Type": "multipart/form-data"
                     }
             }).then((res)=>{
+                alert("头像修改成功！")
                 that.image = 'http://127.0.0.1:8888' + res.data.image
             }).catch((err)=>{
+                alert("文件上传失败，请尝试重新上传！")
+                console.log(err)
+            })
+        },
+        changePsw(){
+            let that = this;
+            axios.post("/password/",{
+                "old_psw":that.oldpsw,
+                "new_psw":that.newpsw,
+                "confirm_psw":that.confirmpsw
+            }, {
+                headers:{
+                    "tsessionid": store.state.tesssionid,
+                }
+            }).then((res)=>{
+                alert("密码修改成功！")
+            }).catch((err)=>{
+                alert("密码修改失败！")
                 console.log(err)
             })
         }

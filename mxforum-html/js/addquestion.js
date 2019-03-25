@@ -12,19 +12,22 @@ let vm = new Vue({
         title:'',
         content:'',
         file:'',
-        notLogin:false
     },
+
     created(){
         this.showname()
     },
+    computed:{
+        user(){
+            return store.state.username
+        },
+        notLogin(){
+            return store.state.notLogin
+        }
+    },
     methods:{
         showname(){
-            if(!store.state.username){
-                location.href = '../../login.html';
-                notLogin = false
-            }else {
-                notLogin = true
-            }
+            return store.commit('showname')
         },
         changeImage: function(e){
             this.file = e.target.files[0];
@@ -53,13 +56,13 @@ let vm = new Vue({
             const that =this;
             if(cate === 0){
                 that.category = "技术问答";
-                that.show = 0
+                that.show = 0;
             }else if(cate === 1){
                 that.category = "技术分享";
-                that.show = 1
+                that.show = 1;
             }else if(cate === 2){
                 that.category = "活动建议";
-                that.show = 2
+                that.show = 2;
             }
         }
     }

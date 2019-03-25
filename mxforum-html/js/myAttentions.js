@@ -4,13 +4,16 @@ axios.defaults.baseURL = 'http://127.0.0.1:8888/';
 let vm = new Vue({
    el:"#content",
    data:{
-        join:[],
+       join:[],
        owner:[],
        userId:store.state.userId,
        questionList:[],
        answersList:[],
-       showGroup:true,
-       showQuestions:false
+       user_nickname: "",
+       user_head_url: "",
+       number:true,
+       showGroups:true,
+       showQuestions:false,
    },
     computed:{
         user(){
@@ -24,8 +27,7 @@ let vm = new Vue({
 
     created(){
        this.showname();
-        this.getMyGroup();
-
+       this.showGroup();
     },
 
     methods:{
@@ -39,8 +41,10 @@ let vm = new Vue({
                     "tsessionid": store.state.tesssionid,
                 }
             }).then((req)=>{
-                that.join = req.data.msg.join;
-                that.owner = req.data.msg.owner
+                that.join = req.data[2].join;
+                that.owner = req.data[1].owner;
+                that.user_nickname = req.data[0].user["nick_name"];
+                that.user_head_url = 'http://127.0.0.1:8888' + req.data[0].user["head_url"]
             }).catch((err)=>{
                 console.log(err)
             })
@@ -70,14 +74,17 @@ let vm = new Vue({
             })
         },
         showGroup(){
-            this.showQuestions = false;
-            this.showGroup = true
+            this.showGroups = true;
+            this.showQuestions = false;            
+            this.number = true;
+            this.getMyGroup();
         },
         showQuestion(){
-            this.showGroup = false;
+            this.showGroups = false;
             this.showQuestions = true;
             this.getQuestions();
-            this.getAply()
+            this.getAply();
+            this.number = false
         }
     }
 

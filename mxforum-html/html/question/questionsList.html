@@ -76,13 +76,9 @@
                 <dl class="card-body">
                     <dd class="clearfix">
                         <ul class="select-list pb20" style="width: 830px">
-                            <li class="selected">
-                                <a href="">全部</a>
-                            </li>
-                            <li>
-                                    <a href="">技术回答</a>
-                                </li><li>
-                                    <a href="">技术分享</a></li>
+                        <li :class="{cate_li: number === 1}" @click="getquestions('')"><a href="#">全部</a></li>
+                     <li :class="{cate_li: number === 2}"><a href="#"  @click="getquestions('技术问答')">技术回答</a></li>
+                    <li :class="{cate_li: number === 3}"><a href="#"  @click="getquestions('技术分享')">技术分享</a></li>
 
                                                     </ul><a class="fb_btn" href="./addquestion.html" style=" float: right;
                 height: 30px;
@@ -106,7 +102,7 @@
             <ul class="fqalist">
                                     <!--置顶问答-->
                     <li v-for="i in res">
-                            <a target="_blank" class="name" href="javascript:;"><img class="lazyload" data-original="../group/group.html" src="../../images/original_50_50.jpg" data-bd-imgshare-binded="1" style="display: block;"><span>{{ i["user"]["nick_name"] }}</span></a>
+                            <a target="_blank" class="name" href="javascript:;"><img class="lazyload" data-original="../group/group.html" src="{{i.user_header_url}}" data-bd-imgshare-binded="1" style="display: block;"><span>{{ i["user"]["nick_name"] }}</span></a>
                             <h3>
                                 <a href="getanswer.html?questionId={{i.id}}">
                                 <span v-if="res.length">{{ i['content'] }}</span>

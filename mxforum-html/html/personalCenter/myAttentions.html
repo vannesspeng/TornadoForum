@@ -4,7 +4,7 @@
     
     <title>关注</title>
     <meta content="关注" name="keywords">
-    <meta content="Eduline多机构在线教育交易平台" name="description">
+    <meta content="Python技术论坛" name="description">
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
     <meta property="qc:admins" content="1403267155765154541656375">
@@ -27,7 +27,7 @@
         <div class="header_new2">
             <div class="top1">
                 <div class="top1img">
-                    <a href="../group/group.html?_ijt=q3nqce0pepbjuv1rh2c72ebhea" title="Eduline在线教育系统" style="display: block;float: left;"><img src="../../images/logo.png" width="150" data-bd-imgshare-binded="1"></a>
+                    <a href="../group/group.html?_ijt=q3nqce0pepbjuv1rh2c72ebhea" title="Python技术论坛" style="display: block;float: left;"><img src="../../images/logo.png" width="150" data-bd-imgshare-binded="1"></a>
                 </div>
 
                 <div class="nav">
@@ -164,12 +164,12 @@
             <div class="centerbox" style="background:url(../question/questionsList.htmldata/upload/2018/0706/14/5b3f10576810b.jpg) center center no-repeat;background-size: cover;">
                     
             <div class="wrap">
-                <!--<div class="place">个人中心<span>&gt;</span>
+                <div class="place">个人中心<span>&gt;</span>
                     <a href="../question/questionsList.htmluser/1446.html">我的主页</a>
-                                        </div>-->
+                                        </div>
                 <div class="center-info">
-                    <img src="../images/original_200_200.jpg" data-bd-imgshare-binded="1">
-                    <div class="userName">顺子哥</div>
+                    <img src="{{user_head_url}}" data-bd-imgshare-binded="1">
+                    <div class="userName">{{user_nickname}}</div>
                     <style>
                         .userName{
                             font-size: 20px;
@@ -202,13 +202,11 @@
         }
     </style>
     <div class="content cbg">
-        <div class="study-navigation">
-            <div class="wrap">
-                <ul class="look-home">
-                    <li class="on"  @click="showGroup">小组</li>
-                    <li @click="showQuestion">问答</li>
-                </ul>
-            </div>
+        <div class="com-btns  wrap"><span>综合排序</span><div class="btns-icon"></div>
+                <div class="group-name">
+                    <button :class="{groupBtn: number == true}"  @click="showGroup()"><a href="#">小组<i></i></a></button>
+                    <button  :class="{groupBtn: number == false}"  @click="showQuestion()"><a href="#">问答<i></i></a></button>
+                </div>
         </div>
 
         <style>
@@ -223,7 +221,7 @@
         <div class="wrap" id="wrap">
             <ul class="myGroup">
                 <!--我的小组-->
-                <li class="content cbg" v-if="showGroup">
+                <li class="content cbg" v-if="showGroups">
                     <div class="wrap">
                         <!--中 -->
                         <div class="center_right">
@@ -235,14 +233,14 @@
                                 <div>创建的小组</div>
                                 <ul class="user-imglist">
                                     <li class="myownGroup" v-if="owner.length" v-for="i in owner">
-                                        <a href="#" class="img"><img :src="'/media/' + i.front_image" class="lazyloading" data-bd-imgshare-binded="1"></a>
+                                        <a href="../group/postsList.html?groupId={{i.group_id}}" class="img"><img :src="'/media/' + i.front_image" class="lazyloading" data-bd-imgshare-binded="1"></a>
                                         <div class="user-title">
 
                                             <h3 style=""><b><a href="#" >{{i.name}}</a></b></h3>
                                             <p >{{i.desc}}</p>
                                             <span>
                                         <strong style="line-height: 24px;font-size: 14px;">
-                                            <a href="#">编辑</a>
+                                            <a href="../group/editGroup.html?groupId={{i.group_id}}">编辑</a>
                                         </strong>
                                         <small><button>删除</button></small>
                                     </span>
@@ -256,10 +254,10 @@
                                 </div>
                             </div>
                             <div class="center_right_con">
-                                <div>创建的小组</div>
+                                <div>加入的小组</div>
                                 <ul class="user-imglist">
                                     <li class="myownGroup" v-if="join.length" v-for="i in join">
-                                        <a href="#" class="img"><img :src="'/media/' + i.front_image" class="lazyloading" data-bd-imgshare-binded="1"></a>
+                                        <a href="../group/postsList.html?groupId={{i.group_id}}" class="img"><img :src="'/media/' + i.front_image" class="lazyloading" data-bd-imgshare-binded="1"></a>
                                         <div class="user-title">
 
                                             <h3><a href="#" v-if="join.length">{{i.name}}</a></h3>
@@ -317,9 +315,9 @@
                                     <h2 class="h2">我的问答</h2>
                                     <ul class="user-imglist">
                                         <div class="qa-replies" v-if="questionList.length" v-for="item in questionList">
-                                            <div class="qa-reply-c"><div class="qa-reply-item"> <a title="da_ge_da" target="_blank" href="../question/questionsList.html" class="qa-reply-item-author"><img width="40" height="40" src="../images/21.gif"></a>
+                                            <div class="qa-reply-c"><div class="qa-reply-item"> <a title="da_ge_da" target="_blank" href="#" class="qa-reply-item-author"><img width="40" height="40" src="{{user_head_url}}"></a>
                                                 <div class="qa-reply-item-inner">
-                                                    <p class="q-reply-item-c"> {{item.content}} </p>
+                                                    <p class="q-reply-item-c"><a href="../question/getanswer.html?questionId={{item.question_id}}"> {{item.content}} </p></a>
                                                     <div class="qa-reply-item-foot clearfix">
                                                         <span class="reply-item-index r">{{item.add_time}}</span>
                                                     </div>
@@ -334,9 +332,9 @@
                                     <ul class="user-imglist">
                                         <div class="qa-replies" v-if="answersList.length" v-for="y in answersList">
                                             <!--追加的子回复-->
-                                            <div class="qa-reply-c" ><div class="qa-reply-item"> <a title="da_ge_da" target="_blank" href="../question/questionsList.htmluser/1426.html" class="qa-reply-item-author"><img width="40" height="40" src="../images/21.gif"></a>
+                                            <div class="qa-reply-c" ><div class="qa-reply-item"> <a title="da_ge_da" target="_blank" href="/question/getanswer.html?questionId={{y.question_id}}" class="qa-reply-item-author"><img width="40" height="40" src="{{user_head_url}}"></a>
                                                 <div class="qa-reply-item-inner">
-                                                    <p class="q-reply-item-c" > {{y.content}} </p>
+                                                    <p class="q-reply-item-c" > <a href="../question/getanswer.html?questionId={{y.question_id}}"> {{y.content}} </p></a> </p>
                                                     <div class="qa-reply-item-foot clearfix">
                                                         <span class="reply-item-index r">{{y.add_time}}</span>
                                                     </div>
@@ -385,7 +383,7 @@
     <div class="post-service yensen">
 
         <div class="copyright-box">
-            Copyright 2017 seition All Rights Reserved  |  蜀ICP 备 16004612号        </div>
+            Copyright 2019 seition All Rights Reserved        </div>
     </div>
 </div>
 <i id="webname" title="myAttentions"></i>

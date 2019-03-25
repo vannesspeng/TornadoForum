@@ -80,7 +80,7 @@
                 <h2>{{questions.title}}</h2>
                 <dl>
                     <dd><span class="icon-pl"></span>{{questions.answer_nums}}</dd>
-                    <dt><a href="../usersCenter/userAnswers.html"><img src="../../images/original_100_100.jpg" class="lazyloading" data-bd-imgshare-binded="1">用户2</a> 发表于：2018-07-06 14:48</dt>
+                    <dt><a href="../usersCenter/userAnswers.html"><img src="{{questions.user_header_url}}" class="lazyloading" data-bd-imgshare-binded="1">{{user}}</a> 发表于：{{questions.add_time}}</dt>
                 </dl>
                 <div class="question-page">
                     <p style=" color: #858585; white-space: normal; font-size: 14px; font-family: 微软雅黑, 宋体;">
@@ -105,7 +105,7 @@
                 <div class="qa-comment-wrap" v-if="answers.length" v-for="item in answers">
                     <div class="qa-comment-author">
                         <a title="用户2" event-node="face_card" uid="27" show="no" target="_blank" href="../usersCenter/userAnswers.html">
-                            <img width="40" style="width: 40px" height="40" src="../../images/original_100_100.jpg">
+                            <img width="40" style="width: 40px" height="40" src="{{item.user.head_url}}">
                             <span class="qa-comment-nick">{{item.user.nick_name}}</span>
                         </a>
                     </div>
@@ -115,7 +115,7 @@
                             <div class="qa-comment-addon-r"> <span class="qa-total-reply">
                       <i class="qa-icon"></i>
                       <span class="js-qa-tr-num" id="ptr21">
-                        <a id="nbcomm21">{{item.like_nums}}</a>条评论
+                        <a id="nbcomm21">{{item.reply_nums}}</a>条评论
                       </span>
                         <span @click="showedComment($index,item.id)">{{item.showComment}}<b><i></i></b></span></span>
                             </div>
@@ -137,7 +137,7 @@
                     <div class="qa-replies" v-if="item.showreply === true">
                         <div class="qa-reply-c" id="comm21" >
                             <div class="qa-reply-item" v-if="replies.length" v-for="(i,index) in replies" >
-                                <a title="da_ge_da" target="_blank" href="../usersCenter/userAnswers.html" class="qa-reply-item-author"><img width="40" height="40" src="../../images/middle.jpg"></a>
+                                <a title="da_ge_da" target="_blank" href="../usersCenter/userAnswers.html" class="qa-reply-item-author"><img width="40" height="40" src="{{replies[i]['user']['head_url']}}"></a>
                                 <div class="qa-reply-item-inner">
                                     <p>
                                         <a class="qa-reply-nick" target="_blank"
@@ -158,7 +158,7 @@
                                                                        :placeholder="replyer"></textarea></div>
                             <div class="item t-right">
                                 <button class="btn-mc btn-mini btn-mc-green  js-ipt-submit"
-                                        @click="addreply(item.user.id)">提交回复
+                                        @click="addreply(item.id, item.user.id)">提交回复
                                 </button>
                             </div>
                         </div>
