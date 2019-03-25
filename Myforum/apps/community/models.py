@@ -14,7 +14,7 @@ class CommunityGroup(BaseModel):
     """
     社区小组
     """
-    creator = ForeignKeyField(User, verbose_name="创建者")
+    creator = ForeignKeyField(User, verbose_name="创建者", on_delete='CASCADE')
     name = CharField(max_length=100, null=True, verbose_name="名称")
     category = CharField(max_length=20, verbose_name="分类", null=True)
     front_image = CharField(max_length=200, null=True, verbose_name="封面图")
@@ -40,8 +40,8 @@ class CommunityGroupMember(BaseModel):
     """
     小组会员申请
     """
-    user = ForeignKeyField(User, verbose_name="用户")
-    community = ForeignKeyField(CommunityGroup, verbose_name="社区")
+    user = ForeignKeyField(User, verbose_name="用户", on_delete='CASCADE')
+    community = ForeignKeyField(CommunityGroup, verbose_name="社区", on_delete='CASCADE')
     status = CharField(choices=HANDLE_STATUS, max_length=10, null=True, verbose_name="处理状态")
     handle_msg = CharField(max_length=200, null=True, verbose_name="处理内容")
     apply_reason = CharField(max_length=200, verbose_name="申请理由")
@@ -53,9 +53,9 @@ class CommunityGroupMember(BaseModel):
 
 
 class Post(BaseModel):
-    user = ForeignKeyField(User, verbose_name="用户")
+    user = ForeignKeyField(User, verbose_name="用户", on_delete='CASCADE')
     title = CharField(max_length=200, verbose_name="标题", null=True)
-    group = ForeignKeyField(CommunityGroup, verbose_name="小组")
+    group = ForeignKeyField(CommunityGroup, verbose_name="小组", on_delete='CASCADE')
     comment_nums = IntegerField(default=0, verbose_name="评论数")
 
     is_excellent = BooleanField(default=0, verbose_name="是否精华")
@@ -70,10 +70,10 @@ class Post(BaseModel):
 
 class PostComment(BaseModel):
     # 评论和回复
-    user = ForeignKeyField(User, verbose_name="用户", related_name="author")
-    post = ForeignKeyField(Post, verbose_name="帖子")
-    parent_comment = ForeignKeyField('self', null=True, verbose_name="评论", related_name="comments_parent")
-    reply_user = ForeignKeyField(User, verbose_name="用户", related_name="replyed_author", null=True)
+    user = ForeignKeyField(User, verbose_name="用户", related_name="author", on_delete='CASCADE')
+    post = ForeignKeyField(Post, verbose_name="帖子", on_delete='CASCADE')
+    parent_comment = ForeignKeyField('self', null=True, verbose_name="评论", related_name="comments_parent", on_delete='CASCADE')
+    reply_user = ForeignKeyField(User, verbose_name="用户", related_name="replyed_author", null=True, on_delete='CASCADE')
     content = CharField(max_length=1000, verbose_name="内容")
     reply_nums = IntegerField(default=0, verbose_name="回复数")
     like_nums = IntegerField(default=0, verbose_name="点赞数")
@@ -90,5 +90,5 @@ class PostComment(BaseModel):
 
 class CommentLike(BaseModel):
     # 评论点赞
-    user = ForeignKeyField(User, verbose_name="用户")
-    post_comment = ForeignKeyField(PostComment, verbose_name="帖子")
+    user = ForeignKeyField(User, verbose_name="用户", on_delete='CASCADE')
+    post_comment = ForeignKeyField(PostComment, verbose_name="帖子", on_delete='CASCADE')

@@ -76,10 +76,10 @@ class GroupHandler(BaseHandler):
                     async with aiofiles.open(file_path, 'wb') as f:
                         await f.write(meta['body'])
                 group = await self.application.objects.create(CommunityGroup,
-                                                              add_user=self.current_user, name=group_form.name.data,
+                                                              creator=self.current_user, name=group_form.name.data,
                                                               category=group_form.category.data,
                                                               desc=group_form.desc.data,
-                                                              notice=group_form.notice.data, from_image=new_filename)
+                                                              notice=group_form.notice.data, front_image=new_filename)
                 re_data["id"] = group.id
         else:
             self.set_status(400)
@@ -172,6 +172,14 @@ class GroupDetailHanlder(BaseHandler):
             self.set_status(400)
             for field in group_form.errors:
                 re_data['field'] = group_form.errors[field][0]
+        self.finish(re_data)
+
+    @authenticated_async
+    async def delete(self, group_id, *args, **kwargs):
+        # 获取group基本信息
+        re_data = {}
+        result = await self.application.objects.execute(CommunityGroup.delete().where(CommunityGroup.id == group_id))
+        re_data["res"] = result
         self.finish(re_data)
 
 
@@ -337,6 +345,36 @@ class PostCommentHanlder(BaseHandler):
             for field in form.errors:
                 re_data[field] = form.errors[field][0]
         self.finish(re_data)
+
+        @authenticated_async
+        async def delete(self, post_i, args, **kwargs):
+            re_data = {}
+            try:
+                # 获取对应的帖子实体
+                post = await self.application.objects.get(Post, id=int(post_id))
+                # 数据库中创建评论记录
+                post_comment = await self.application.objects.create(PostComment, user=self.current_user, post=post,
+                                                                     content=form.content.data)
+                # 帖子的评论数要加1
+                post.comment_nums += 1
+                await self.application.objects.update(post)
+                re_data["id"] = post_comment.id
+                # 这里这样处理，是剔除掉User中的datetime类型，这样序列化的时候就不会报错了
+                re_data["user"] = {}
+                re_data["user"]["nick_name"] = self.current_user.nick_name
+                re_data["user"]["id"] = self.current_user.id
+
+                # 新增一条评论消息
+                receiver = await self.application.objects.get(User, id=post.user_id)
+                await self.application.objects.create(Message, sender=self.current_user,
+                                                      receiver=receiver,
+                                                      message_type=1,
+                                                      message=form.content.data,
+                                                      parent_content=post.title)
+            except Post.DoesNotExist as e:
+                self.set_status(404)
+
+            self.finish(re_data)
 
 
 class CommentReplyHandler(BaseHandler):
