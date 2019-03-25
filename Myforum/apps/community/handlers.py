@@ -13,7 +13,7 @@ from playhouse.shortcuts import model_to_dict
 from Myforum.Forum.handlers import BaseHandler
 from Myforum.Forum.settings import settings
 from Myforum.apps.community.forms import CommunityGroupForm, GroupApplyForm, PostForm, PostComentForm, CommentReplyForm, \
-    HandlerApplyForm
+    HandlerApplyForm, CommunityGroupUpdateForm
 from Myforum.apps.community.models import CommunityGroup, CommunityGroupMember, Post, PostComment, CommentLike
 from Myforum.apps.messages.models import Message
 from Myforum.apps.users.models import User
@@ -137,11 +137,41 @@ class GroupDetailHanlder(BaseHandler):
             item_dict["notice"] = group.notice
             item_dict["member_nums"] = group.member_nums
             item_dict["post_nums"] = group.post_nums
+            item_dict["category"] = group.category
             item_dict["front_image"] = "{}/media/{}".format(self.settings["SITE_URL"], group.front_image)
             re_data = item_dict
         except CommunityGroup.DoesNotExist as e:
             self.set_status(400)
 
+        self.finish(re_data)
+
+    @authenticated_async
+    async def patch(self, group_id, *args, **kwargs):
+        re_data = {}
+        # 这里不能使用form.form_json()方法，因为这个参数里面包含文件参数
+        group = await self.application.objects.get(CommunityGroup, id=group_id)
+        group_form = CommunityGroupUpdateForm(self.request.body_arguments)
+        new_filename = ""
+        if group_form.validate():
+            files_meta = self.request.files.get("front_image", None)
+            if not files_meta:
+                pass
+            else:
+                for meta in files_meta:
+                    # 获取原文件名，生成新的文件名，并将保存的图片文件的完整路径存入到数据库
+                    file_name = meta["filename"]
+                    new_filename = "{uuid}_{filename}".format(uuid=uuid.uuid1(), filename=file_name)
+                    file_path = os.path.join(settings['MEDIA_ROOT'], new_filename)
+                    async with aiofiles.open(file_path, 'wb') as f:
+                        await f.write(meta['body'])
+                group.front_image = new_filename
+            group.desc = group_form.desc.data
+            group.notice = group_form.notice.data
+            await self.application.objects.update(group)
+        else:
+            self.set_status(400)
+            for field in group_form.errors:
+                re_data['field'] = group_form.errors[field][0]
         self.finish(re_data)
 
 
